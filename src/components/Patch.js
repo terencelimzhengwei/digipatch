@@ -14,9 +14,8 @@ const PatchCard = ({ index, patch, toggleEnabled }) => {
     return (
         <Box
             p={5}
-            border="1px"
-            borderStyle="dashed"
-            borderColor="gray.500"
+            border="2px dashed"
+            borderColor="gray.600"
             borderRadius="lg"
             gap={10}
         >

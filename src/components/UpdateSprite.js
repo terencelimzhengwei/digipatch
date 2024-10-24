@@ -97,10 +97,9 @@ const UpdateSprite = props => {
                 <VStack
                     gap={0}
                     p={1}
-                    borderWidth="1px"
+                    border="2px dashed"
+                    borderColor="gray.600"
                     borderRadius="lg"
-                    borderStyle="dashed"
-                    borderColor="gray.500"
                     boxSize={'130px'}
                 >
                     <Text

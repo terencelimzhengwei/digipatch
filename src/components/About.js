@@ -1,10 +1,4 @@
-import {
-    Text,
-    Heading,
-    Link,
-    Wrap,
-    WrapItem,
-} from '@chakra-ui/react';
+import { Text, Heading, Link, Wrap, WrapItem } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 const About = () => {

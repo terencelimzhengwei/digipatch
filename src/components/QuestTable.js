@@ -31,7 +31,7 @@ const QuestTable = ({ data, updateQuests }) => {
     };
 
     return (
-        <Wrap p={5} fontSize={'sm'} gap={1} justify="center" align="center">
+        <Wrap fontSize={'sm'} gap={1} justify="center" align="center">
             {quests.map((stage, stageIndex) => (
                 <WrapItem key={stageIndex}>
                     <StageCard

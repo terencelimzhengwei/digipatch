@@ -45,18 +45,32 @@ const StageCard = ({ stage, stageIndex, numChars, updateStage }) => {
     return (
         <Box
             p={5}
-            border="1px"
-            borderStyle="dashed"
-            borderColor="gray.500"
+            border="2px dashed"
+            borderColor="gray.600"
             borderRadius="lg"
             gap={10}
+            mx="auto" // Centering the card horizontally
         >
-            <Text fontWeight="bold" fontSize="2xl" textAlign="center" mb={4}>
+            <Text
+                fontWeight="bold"
+                fontSize={['xl', '2xl']}
+                textAlign="center"
+                mb={4}
+            >
                 Stage {stageIndex + 1}
             </Text>
-            <Flex gap={4}>
+            <Flex
+                gap={4}
+                flexWrap="wrap" // Allow wrapping on smaller screens
+                justifyContent="center"
+            >
                 {stage.map((character, charIndex) => (
-                    <Flex key={charIndex} direction="column" align="center">
+                    <Flex
+                        key={charIndex}
+                        direction="column"
+                        align="center"
+                        mb={4}
+                    >
                         <Box>
                             <Center>
                                 <Image
@@ -64,7 +78,7 @@ const StageCard = ({ stage, stageIndex, numChars, updateStage }) => {
                                     src={character.Sprite}
                                     fallbackSrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAAAAAByaaZbAAAA6ElEQVRIx+3UwQ6CMAzGcd7/YajRdIZ1HjQW9liODXCo1PZgTIzfgdP/B8sONEhE3pN22FBkco446kYNMUKaYzUgyAta4F0BbvgUoGA8EnH+hOvVIHJwLvT6a03PYYjRBAz7gy+BgY0gHM4mEHawPxtA6gH2FzXI/UrI4FT6Wohg6Sshgaq/CwGseoDD5Q146GexCZ76SWyBF30RNWC6in0WFeiPgCz2o7iD1MMkNvv0v/MzyH0RQg84g6lPr7hK/QKWPh1T6mdQ9W9WgL4vwNBnYOkz6MAGPP4CaPV9O4IODet8g940vAF536t7Ag/0WAAAAABJRU5ErkJggg=="
                                     alt="Character"
-                                    boxSize="35px"
+                                    boxSize={['30px', '35px', '40px']}
                                 />
                             </Center>
                         </Box>
@@ -74,18 +88,16 @@ const StageCard = ({ stage, stageIndex, numChars, updateStage }) => {
                                     align="center"
                                     gap={0}
                                     key={`field-${i}`}
+                                    width={['80px', '100px']} // Adjust width for different screen sizes
                                 >
-                                    <Text fontWeight={'bold'} width={'100px'}>
+                                    <Text fontWeight={'bold'}>
                                         {attributeKey}
                                     </Text>
                                     {editStage ? (
                                         !['CharacterID', 'Pattern'].includes(
                                             attributeKey
                                         ) ? (
-                                            // Input field in edit mode
                                             <Input
-                                                width={'100px'}
-                                                height={'20px'}
                                                 size="xs"
                                                 textAlign={'center'}
                                                 defaultValue={
@@ -104,8 +116,6 @@ const StageCard = ({ stage, stageIndex, numChars, updateStage }) => {
                                         ) : (
                                             <Select
                                                 size="xs"
-                                                width={'100px'}
-                                                height={'20px'}
                                                 defaultValue={
                                                     character.attributes[
                                                         attributeKey
@@ -126,9 +136,6 @@ const StageCard = ({ stage, stageIndex, numChars, updateStage }) => {
                                                                   value={
                                                                       pattern[p]
                                                                   }
-                                                                  align={
-                                                                      'center'
-                                                                  }
                                                               >
                                                                   {p}
                                                               </option>
@@ -143,22 +150,14 @@ const StageCard = ({ stage, stageIndex, numChars, updateStage }) => {
                                                           ),
                                                           65535,
                                                       ].map(index => (
-                                                          <option
-                                                              value={index}
-                                                              align={'center'}
-                                                          >
+                                                          <option value={index}>
                                                               {index}
                                                           </option>
                                                       ))}
                                             </Select>
                                         )
                                     ) : (
-                                        // Render static text in non-edit mode
-                                        <Text
-                                            fontSize={'xs'}
-                                            width={'100px'}
-                                            height={'20px'}
-                                        >
+                                        <Text fontSize={'xs'}>
                                             {attributeKey === 'Pattern'
                                                 ? valueToPattern(
                                                       character.attributes[
