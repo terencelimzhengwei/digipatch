@@ -20,7 +20,7 @@ const Nav = props => {
     const [menuOpen, setMenuOpen] = useState(false);
 
     // Determine whether to display buttons or a hamburger menu based on screen size
-    const isMobile = useBreakpointValue({ base: true, md: false });
+    const isMobile = useBreakpointValue({ base: true, md: true, lg: true, xl: false });
 
     const handleMenuClick = index => {
         navClick(index);
@@ -53,6 +53,9 @@ const Nav = props => {
                                 </MenuItem>
                                 <MenuItem onClick={() => handleMenuClick(3)}>
                                     Update Quest Mode
+                                </MenuItem>
+                                <MenuItem onClick={() => handleMenuClick(6)}>
+                                    Update Idle Animation
                                 </MenuItem>
                                 <MenuItem onClick={() => handleMenuClick(4)}>
                                     Patches
@@ -102,17 +105,23 @@ const Nav = props => {
                             >
                                 Update Quest Mode
                             </Button>
+                            <Button
+                                fontSize={['sm', 'md']}
+                                variant="ghost"
+                                isActive={pageActive === 6}
+                                onClick={() => navClick(6)}
+                            >
+                                Update Idle Animation
+                            </Button>
+                            <Button
+                                fontSize={['sm', 'md']}
+                                variant="ghost"
+                                isActive={pageActive === 4}
+                                onClick={() => navClick(4)}
+                            >
+                                Patches
+                            </Button>
                         </>
-                    ) : null}
-                    {fileUploaded ? (
-                        <Button
-                            fontSize={['sm', 'md']}
-                            variant="ghost"
-                            isActive={pageActive === 4}
-                            onClick={() => navClick(4)}
-                        >
-                            Patches
-                        </Button>
                     ) : null}
                     <Button
                         fontSize={['sm', 'md']}

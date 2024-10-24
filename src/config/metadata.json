@@ -13,7 +13,11 @@
         "StatTableLocation": "0x117aa",
         "Stats": ["SpriteID","Stage","MaxStamina","MinWeight","EvoTime","SleepHour","SleepMin","WakeHour","WakeMin","HungerTimer","StrengthDecayTimer","PoopTimer","HealAmount","Attribute","Power","AttackSprite","AltAttackSprite"],
         "QuestModeLocation": "0xc25e",
-        "QuestMode": {"levels":8,"enemies":5,"attributes":["CharacterID","Power"]}
+        "QuestMode": {"levels":8,"enemies":5,"attributes":["CharacterID","Power"]},
+        "AnimationLocation": "0x16724",
+        "AnimationFrames":32,
+        "AnimationFrameInfo":["spriteId", "x", "y", "flip"],
+        "CharSpriteLabel":["idle_1","idle_2","happy","angry","training_1","training_2","attack_1","attack_2","eat_1","eat_2","refuse","sleep_1","sleep_2","sick","sick_lose"]
     },
     "dmc2":
     {
@@ -29,7 +33,11 @@
         "StatTableLocation": "0x11590",
         "Stats": ["SpriteID","Stage","MaxStamina","MinWeight","EvoTime","SleepHour","SleepMin","WakeHour","WakeMin","HungerTimer","StrengthDecayTimer","PoopTimer","HealAmount","Attribute","Power","AttackSprite","AltAttackSprite"],
         "QuestModeLocation": "0xc044",
-        "QuestMode": {"levels":8,"enemies":5,"attributes":["CharacterID","Power"]}
+        "QuestMode": {"levels":8,"enemies":5,"attributes":["CharacterID","Power"]},
+        "AnimationLocation": "0x1650A",
+        "AnimationFrames":32,
+        "AnimationFrameInfo":["spriteId", "x", "y", "flip"],
+        "CharSpriteLabel":["idle_1","idle_2","happy","angry","training_1","training_2","attack_1","attack_2","eat_1","eat_2","refuse","sleep_1","sleep_2","sick","sick_lose"]
     },
     "dmc3":
     {
@@ -45,7 +53,11 @@
         "StatTableLocation": "0x11d58",
         "Stats": ["SpriteID","Stage","MaxStamina","MinWeight","EvoTime","SleepHour","SleepMin","WakeHour","WakeMin","HungerTimer","StrengthDecayTimer","PoopTimer","HealAmount","Attribute","Power","AttackSprite","AltAttackSprite"],
         "QuestModeLocation": "0xd64e",
-        "QuestMode": {"levels":8,"enemies":5,"attributes":["CharacterID","Power"]}
+        "QuestMode": {"levels":8,"enemies":5,"attributes":["CharacterID","Power"]},
+        "AnimationLocation": "0x16D22",
+        "AnimationFrames":32,
+        "AnimationFrameInfo":["spriteId", "x", "y", "flip"],
+        "CharSpriteLabel":["idle_1","idle_2","happy","angry","training_1","training_2","attack_1","attack_2","eat_1","eat_2","refuse","sleep_1","sleep_2","sick","sick_lose"]
     },
     "dmc4":
     {
@@ -61,7 +73,11 @@
         "StatTableLocation": "0x11b78",
         "Stats": ["SpriteID","Stage","MaxStamina","MinWeight","EvoTime","SleepHour","SleepMin","WakeHour","WakeMin","HungerTimer","StrengthDecayTimer","PoopTimer","HealAmount","Attribute","Power","AttackSprite","AltAttackSprite"],
         "QuestModeLocation": "0xd46e",
-        "QuestMode": {"levels":8,"enemies":5,"attributes":["CharacterID","Power"]}
+        "QuestMode": {"levels":8,"enemies":5,"attributes":["CharacterID","Power"]},
+        "AnimationLocation": "0x16B20",
+        "AnimationFrames":32,
+        "AnimationFrameInfo":["spriteId", "x", "y", "flip"],
+        "CharSpriteLabel":["idle_1","idle_2","happy","angry","training_1","training_2","attack_1","attack_2","eat_1","eat_2","refuse","sleep_1","sleep_2","sick","sick_lose"]
     },
     "dmc5":
     {
@@ -77,7 +93,11 @@
         "StatTableLocation": "0x11ba2",
         "Stats": ["SpriteID","Stage","MaxStamina","MinWeight","EvoTime","SleepHour","SleepMin","WakeHour","WakeMin","HungerTimer","StrengthDecayTimer","PoopTimer","HealAmount","Attribute","Power","AttackSprite","AltAttackSprite"],
         "QuestModeLocation": "0xd498",
-        "QuestMode": {"levels":8,"enemies":5,"attributes":["CharacterID","Power"]}
+        "QuestMode": {"levels":8,"enemies":5,"attributes":["CharacterID","Power"]},
+        "AnimationLocation": "0x16B4A",
+        "AnimationFrames":32,
+        "AnimationFrameInfo":["spriteId", "x", "y", "flip"],
+        "CharSpriteLabel":["idle_1","idle_2","happy","angry","training_1","training_2","attack_1","attack_2","eat_1","eat_2","refuse","sleep_1","sleep_2","sick","sick_lose"]
     },
     "penc1":
     {
@@ -93,7 +113,11 @@
         "StatTableLocation": "0x02013E",
         "Stats": ["SpriteID","Stage","Attribute","MinWeight","Power","SleepHour","SleepMin","WakeHour","WakeMin","HungerTimer","EvoTime","PoopTimer","JogressAvailable","AlbumNumber", "DefaultAlbumOpen","DP","MissCareMax","AttackSprite"],
         "QuestModeLocation": "0x1a044",
-        "QuestMode": {"levels":10,"enemies":5,"attributes":["CharacterID","Power","Handicap","Pattern"]}
+        "QuestMode": {"levels":10,"enemies":5,"attributes":["CharacterID","Power","Handicap","Pattern"]},
+        "AnimationLocation": "0x1B9AC",
+        "AnimationFrames":29,
+        "AnimationFrameInfo":["spriteId", "x", "y", "flip"],
+        "CharSpriteLabel":["idle_1","idle_2","eat_1","eat_2","sleep_1","sleep_2","refuse","happy","angry","sick","sick_lose","attack"]
     },
     "penc2":
     {
@@ -109,7 +133,11 @@
         "StatTableLocation": "0x2013E",
         "Stats": ["SpriteID","Stage","Attribute","MinWeight","Power","SleepHour","SleepMin","WakeHour","WakeMin","HungerTimer","EvoTime","PoopTimer","JogressAvailable","AlbumNumber", "DefaultAlbumOpen","DP","MissCareMax","AttackSprite"],
         "QuestModeLocation": "0x1a002",
-        "QuestMode": {"levels":10,"enemies":5,"attributes":["CharacterID","Power","Handicap","Pattern"]}
+        "QuestMode": {"levels":10,"enemies":5,"attributes":["CharacterID","Power","Handicap","Pattern"]},
+        "AnimationLocation": "0x1B96A",
+        "AnimationFrames":29,
+        "AnimationFrameInfo":["spriteId", "x", "y", "flip"],
+        "CharSpriteLabel":["idle_1","idle_2","eat_1","eat_2","sleep_1","sleep_2","refuse","happy","angry","sick","sick_lose","attack"]
     },
     "penc3":
     {
@@ -125,7 +153,11 @@
         "StatTableLocation": "0x2013E",
         "Stats": ["SpriteID","Stage","Attribute","MinWeight","Power","SleepHour","SleepMin","WakeHour","WakeMin","HungerTimer","EvoTime","PoopTimer","JogressAvailable","AlbumNumber", "DefaultAlbumOpen","DP","MissCareMax","AttackSprite"],
         "QuestModeLocation": "0x1a008",
-        "QuestMode": {"levels":10,"enemies":5,"attributes":["CharacterID","Power","Handicap","Pattern"]}
+        "QuestMode": {"levels":10,"enemies":5,"attributes":["CharacterID","Power","Handicap","Pattern"]},
+        "AnimationLocation": "0x1B970",
+        "AnimationFrames":29,
+        "AnimationFrameInfo":["spriteId", "x", "y", "flip"],
+        "CharSpriteLabel":["idle_1","idle_2","eat_1","eat_2","sleep_1","sleep_2","refuse","happy","angry","sick","sick_lose","attack"]
     },
     "penc4":
     {
@@ -141,7 +173,11 @@
         "StatTableLocation": "0x2013E",
         "Stats": ["SpriteID","Stage","Attribute","MinWeight","Power","SleepHour","SleepMin","WakeHour","WakeMin","HungerTimer","EvoTime","PoopTimer","JogressAvailable","AlbumNumber", "DefaultAlbumOpen","DP","MissCareMax","AttackSprite"],
         "QuestModeLocation": "0x1a622",
-        "QuestMode": {"levels":10,"enemies":5,"attributes":["CharacterID","Power","Handicap","Pattern"]}
+        "QuestMode": {"levels":10,"enemies":5,"attributes":["CharacterID","Power","Handicap","Pattern"]},
+        "AnimationLocation": "0x1BF8A",
+        "AnimationFrames":29,
+        "AnimationFrameInfo":["spriteId", "x", "y", "flip"],
+        "CharSpriteLabel":["idle_1","idle_2","eat_1","eat_2","sleep_1","sleep_2","refuse","happy","angry","sick","sick_lose","attack"]
     },
     "penc5":
     {
@@ -157,7 +193,11 @@
         "StatTableLocation": "0x2013E",
         "Stats": ["SpriteID","Stage","Attribute","MinWeight","Power","SleepHour","SleepMin","WakeHour","WakeMin","HungerTimer","EvoTime","PoopTimer","JogressAvailable","AlbumNumber", "DefaultAlbumOpen","DP","MissCareMax","AttackSprite"],
         "QuestModeLocation": "0x1a62e",
-        "QuestMode": {"levels":10,"enemies":5,"attributes":["CharacterID","Power","Handicap","Pattern"]}
+        "QuestMode": {"levels":10,"enemies":5,"attributes":["CharacterID","Power","Handicap","Pattern"]},
+        "AnimationLocation": "0x1BF96",
+        "AnimationFrames":29,
+        "AnimationFrameInfo":["spriteId", "x", "y", "flip"],
+        "CharSpriteLabel":["idle_1","idle_2","eat_1","eat_2","sleep_1","sleep_2","refuse","happy","angry","sick","sick_lose","attack"]
     },
     "penc0":
     {
@@ -173,6 +213,10 @@
         "StatTableLocation": "0x2013E",
         "Stats": ["SpriteID","Stage","Attribute","MinWeight","Power","SleepHour","SleepMin","WakeHour","WakeMin","HungerTimer","EvoTime","PoopTimer","JogressAvailable","AlbumNumber", "DefaultAlbumOpen","DP","MissCareMax","AttackSprite"],
         "QuestModeLocation": "0x1a7e0",
-        "QuestMode": {"levels":10,"enemies":5,"attributes":["CharacterID","Power","Handicap","Pattern"]}
+        "QuestMode": {"levels":10,"enemies":5,"attributes":["CharacterID","Power","Handicap","Pattern"]},
+        "AnimationLocation": "0x1C148",
+        "AnimationFrames":29,
+        "AnimationFrameInfo":["spriteId", "x", "y", "flip"],
+        "CharSpriteLabel":["idle_1","idle_2","eat_1","eat_2","sleep_1","sleep_2","refuse","happy","angry","sick","sick_lose","attack"]
     }
 }

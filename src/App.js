@@ -12,6 +12,7 @@ import UpdateSprite from './components/UpdateSprite';
 import { init, rebuild, downloadBIN, getPatches } from './utils/analyzer';
 import UpdateStats from './components/UpdateStats';
 import UpdateQuest from './components/UpdateQuest';
+import UpdateAnimation from './components/UpdateAnimation';
 import About from './components/About';
 import Patch from './components/Patch';
 
@@ -172,6 +173,7 @@ function App() {
                         />
                     ) : null}
                     {page === 5 ? <About /> : null}
+                    {page === 6 ? <UpdateAnimation data={data} updateAnimation={null} /> : null}
                 </Flex>
             </Box>
         </ChakraProvider>

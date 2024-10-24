@@ -28,6 +28,24 @@ const getQuestInfos = (arrayBuffer, spriteMetadata) => {
     return questMode;
 };
 
+const getAnimation = (buffer, spriteMetadata) => {
+    console.log(spriteMetadata)
+    const { AnimationLocation, AnimationFrames, AnimationFrameInfo } = spriteMetadata;
+    const data = new DataView(buffer.slice(0));
+    const offset = Number(AnimationLocation);
+    const animation = [];
+    for (let i = 0; i < AnimationFrames; i++) {
+        const frame = AnimationFrameInfo.map((label, index)=>{
+            const obj = {}
+            obj[label] = data.getUint16(offset + i * AnimationFrameInfo.length * 2 + index * 2, true);
+            return obj
+        })
+        const frameObj = Object.assign({}, ...frame);
+        animation.push(frameObj);
+    }
+    return animation
+}
+
 const getCharInfos = (arrayBuffer, spriteMetadata) => {
     const data = new DataView(arrayBuffer.slice(0));
     let offset = Number(spriteMetadata.StatTableLocation);
@@ -205,6 +223,7 @@ const init = async arrayBuffer => {
         spriteMetadata,
         firmware.id.includes('penc')
     );
+    const animation = getAnimation(buffer, spriteMetadata);
     return {
         buffer,
         firmware,
@@ -213,6 +232,7 @@ const init = async arrayBuffer => {
         imageDatas,
         charInfos,
         questMode,
+        animation,
     };
 };
 
