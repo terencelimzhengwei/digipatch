@@ -20,7 +20,7 @@ const firmwareChecker = async arrayBuffer => {
                         region.endOffset + 1
                     );
                     // console.log(
-                    //     Array.from(calculatedHash, byte =>
+                    //     '0x' + Array.from(calculatedHash, byte =>
                     //         byte.toString(16).padStart(2, '0')
                     //     ).join(',0x')
                     // );
