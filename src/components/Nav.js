@@ -55,7 +55,7 @@ const Nav = props => {
                                     Update Quest Mode
                                 </MenuItem>
                                 <MenuItem onClick={() => handleMenuClick(6)}>
-                                    Update Idle Animation
+                                    Update Animations
                                 </MenuItem>
                                 <MenuItem onClick={() => handleMenuClick(4)}>
                                     Patches

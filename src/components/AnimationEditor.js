@@ -1,101 +1,89 @@
 import {
-    Box,
-    Table,
-    Thead,
-    Tbody,
-    Tr,
-    Th,
-    Td,
-    Input,
-    Checkbox,
-    Button,
-    VStack,
-    useBreakpointValue,
-  } from '@chakra-ui/react';
-  
-  const AnimationEditor = ({ animationSequence, updateAnimationSequence }) => {
-    // Handle updates to specific frame properties
-    const handleUpdate = (index, key, value) => {
-      const updatedSequence = [...animationSequence];
-      updatedSequence[index][key] = value;
-      updateAnimationSequence(updatedSequence);
-    };
-  
-    const inputSize = useBreakpointValue({ base: 'sm', md: 'md' }); // Responsive input size
-  
-    return (
-      <VStack spacing={4} align="stretch" p={4} bg="gray.800" borderRadius="md" width={"100%"}>
-        <Table variant="simple" colorScheme="whiteAlpha" size="sm">
-          <Thead>
-            <Tr>
-              <Th color="white">Frame</Th>
-              <Th color="white">Sprite ID</Th>
-              <Th color="white">X Position</Th>
-              <Th color="white">Y Position</Th>
-              <Th color="white">Flip</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {animationSequence.map((frame, index) => (
-              <Tr key={index}>
-                <Td>{index + 1}</Td>
-                <Td>
-                  <Input
-                    type="number"
-                    value={frame.spriteId}
-                    onChange={(e) =>
-                      handleUpdate(index, 'spriteId', parseInt(e.target.value, 10))
-                    }
-                    bg="gray.700"
-                    color="white"
-                    size={inputSize} // Responsive size
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="number"
-                    value={frame.x}
-                    onChange={(e) =>
-                      handleUpdate(index, 'x', parseInt(e.target.value, 10))
-                    }
-                    bg="gray.700"
-                    color="white"
-                    size={inputSize} // Responsive size
-                  />
-                </Td>
-                <Td>
-                  <Input
-                    type="number"
-                    value={frame.y}
-                    onChange={(e) =>
-                      handleUpdate(index, 'y', parseInt(e.target.value, 10))
-                    }
-                    bg="gray.700"
-                    color="white"
-                    size={inputSize} // Responsive size
-                  />
-                </Td>
-                <Td>
-                  <Checkbox
-                    isChecked={frame.flip}
-                    onChange={(e) => handleUpdate(index, 'flip', e.target.checked)}
-                    colorScheme="green"
-                  />
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-        <Button
-          colorScheme="green"
-          alignSelf="center"
-          onClick={() => console.log('Updated Sequence:', animationSequence)}
+  Box,
+  Flex,
+  FormControl,
+  FormLabel,
+  Input,
+  NumberInput,
+  NumberInputField,
+  Switch,
+  Text,
+} from "@chakra-ui/react";
+
+function FrameEditor({ frameData, onUpdateFrame }) {
+  return (
+    <Flex
+      direction="column"
+      p={2}
+      minW="100px"
+      flex="1"
+    >
+      <FormControl mb={2}>
+        <FormLabel fontSize="sm">Sprite ID</FormLabel>
+        <Input
+          size="sm"
+          value={frameData.spriteId}
+          onChange={(e) => onUpdateFrame("spriteId", e.target.value)}
+        />
+      </FormControl>
+
+      <FormControl mb={2}>
+        <FormLabel fontSize="sm">X Position</FormLabel>
+        <NumberInput
+          size="sm"
+          value={frameData.x}
+          onChange={(valueString) => onUpdateFrame("x", parseInt(valueString))}
         >
-          Save Changes
-        </Button>
-      </VStack>
-    );
-  };
-  
-  export default AnimationEditor;
-  
+          <NumberInputField />
+        </NumberInput>
+      </FormControl>
+
+      <FormControl mb={2}>
+        <FormLabel fontSize="sm">Y Position</FormLabel>
+        <NumberInput
+          size="sm"
+          value={frameData.y}
+          onChange={(valueString) => onUpdateFrame("y", parseInt(valueString))}
+        >
+          <NumberInputField />
+        </NumberInput>
+      </FormControl>
+
+      <FormControl display="flex" alignItems="center" mt={2}>
+        <FormLabel fontSize="sm" mb="0">
+          Flip
+        </FormLabel>
+        <Switch
+          size="sm"
+          isChecked={frameData.flip}
+          onChange={(e) => onUpdateFrame("flip", e.target.checked)}
+        />
+      </FormControl>
+    </Flex>
+  );
+}
+
+function AnimationSequenceEditor({ frames, onUpdateSequence }) {
+  console.log(onUpdateSequence)
+  return (
+    <Flex wrap="wrap" gap={4}>
+      {frames.map((frame, index) => (
+        <Box key={index} p={2} border="1px solid gray" borderRadius="md" minW="120px" flex="1 0 10%">
+          <Text fontSize="sm" fontWeight="bold" mb={2}>
+            Frame {index + 1}
+          </Text>
+          <FrameEditor
+            frameData={frame}
+            onUpdateFrame={(field, value) => {
+              const newFrames = [...frames];
+              newFrames[index] = { ...newFrames[index], [field]: value };
+              onUpdateSequence(newFrames);
+            }}
+          />
+        </Box>
+      ))}
+    </Flex>
+  );
+}
+
+export default AnimationSequenceEditor;
