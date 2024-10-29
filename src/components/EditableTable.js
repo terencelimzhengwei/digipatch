@@ -65,6 +65,9 @@ const EditableRow = ({
 
     return (
         <Tr key={`row-${rowIndex}`}>
+            <Td textAlign="center" verticalAlign="middle">
+                {rowIndex}
+            </Td>
             <Td minWidth={20} textAlign="center" verticalAlign="middle">
                 <ImageCell rowIndex={rowIndex} src={row.SpriteImage} />
             </Td>
@@ -183,6 +186,7 @@ const EditableTable = ({ data, updateCharInfos }) => {
             <Table variant="simple" size="sm">
                 <Thead>
                     <Tr>
+                        <Th textAlign="center">ID</Th>
                         <Th textAlign="center">Sprite</Th>
                         <Th textAlign="center">AtkSprite</Th>
                         <Th textAlign="center">AltAtkSprite</Th>
