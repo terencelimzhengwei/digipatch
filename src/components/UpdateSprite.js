@@ -27,7 +27,6 @@ const UpdateSprite = props => {
             // Create an array of promises
             const promises = acceptedFiles.map(async f => {
                 const { name, imageData, rgb565 } = await getImageDetails(f);
-                console.log(name);
                 const index = parseInt(name.split('.')[0]);
                 if (!index) {
                     indexError = true;
@@ -84,8 +83,16 @@ const UpdateSprite = props => {
                 dataOffsets.push(dataOffsets[index] + imageLength);
                 return { width, height };
             });
+
+            const newImageInfos = imageSizes.map((size, index) => {
+                const { width, height } = size;
+                const dataOffset = dataOffsets[index];
+                return { width, height, dataOffset };
+            });
+
             if (
-                Number(spriteMetadata.SpritePackBase) + dataOffsets.slice(-1) >
+                Number(spriteMetadata.SpritePackBase) +
+                    dataOffsets.slice(-1)[0] >
                 Number(0x7fcfff)
             ) {
                 toast({
@@ -99,11 +106,6 @@ const UpdateSprite = props => {
                 });
                 return;
             }
-            const newImageInfos = imageSizes.map((size, index) => {
-                const { width, height } = size;
-                const dataOffset = dataOffsets[index];
-                return { width, height, dataOffset };
-            });
 
             // Create a new data object by copying the old data and updating imageUrls
             const updatedData = {
