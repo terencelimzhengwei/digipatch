@@ -129,12 +129,30 @@ async function rebuild(data, patchFiles) {
 
     const view = new Uint8Array(buffer);
 
-    // Update image data
+    // Update size and offset table and image data
     imageInfos.forEach((img, i) => {
         const newImageView = new Uint8Array(imageDatas[i].rgb565);
         view.set(
             newImageView,
             Number(spriteMetadata.SpritePackBase) + img.dataOffset
+        );
+
+        dataView.setUint16(
+            spriteMetadata.SizeTableOffset + i * 4,
+            img.width,
+            true
+        );
+
+        dataView.setUint16(
+            spriteMetadata.SizeTableOffset + i * 4 + 2,
+            img.height,
+            true
+        );
+
+        dataView.setUint32(
+            Number(spriteMetadata.SpritePackBase) + i * 4,
+            img.dataOffset,
+            true
         );
     });
 
