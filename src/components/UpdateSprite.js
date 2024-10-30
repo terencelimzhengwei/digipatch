@@ -19,23 +19,25 @@ const UpdateSprite = props => {
     const toast = useToast();
 
     const onDrop = async acceptedFiles => {
-        const newImageDatas = [...data.imageDatas];
+        const { imageDatas, imageInfos } = data;
+        const newImageDatas = [...imageDatas];
         let indexError = false;
         let dimensionError = false;
         if (acceptedFiles.length) {
             // Create an array of promises
             const promises = acceptedFiles.map(async f => {
                 const { name, imageData, rgb565 } = await getImageDetails(f);
+                console.log(name);
                 const index = parseInt(name.split('.')[0]);
+                if (!index) {
+                    indexError = true;
+                    return;
+                }
                 if (index >= data.imageDatas.length) {
                     indexError = true;
                     return;
                 }
-                if (
-                    imageData.width !==
-                        data.imageDatas[index].imageData.width ||
-                    imageData.height !== data.imageDatas[index].imageData.height
-                ) {
+                if (imageData.width > 96 || imageData.height > 96) {
                     dimensionError = true;
                     return;
                 }
@@ -53,7 +55,7 @@ const UpdateSprite = props => {
                 toast({
                     title: 'Dimension Error',
                     description:
-                        'One of the files you uploaded have different dimensions from the original image',
+                        'One of the files you uploaded have invalid dimensions',
                     status: 'error',
                     duration: 9000,
                     isClosable: true,
@@ -66,7 +68,7 @@ const UpdateSprite = props => {
                 toast({
                     title: 'Index Error',
                     description:
-                        'One of the files you have uploaded have an index that is out of range',
+                        'One of the files you have uploaded have an index that is invalid',
                     status: 'error',
                     duration: 9000,
                     isClosable: true,
@@ -74,11 +76,25 @@ const UpdateSprite = props => {
                 });
                 return;
             }
+            const dataOffsets = [];
+            dataOffsets.push(imageInfos[0].dataOffset);
+            const imageSizes = newImageDatas.map((image, index) => {
+                const { height, width } = image.imageData;
+                const imageLength = height * width * 2;
+                dataOffsets.push(dataOffsets[index] + imageLength);
+                return { width, height };
+            });
+            const newImageInfos = imageSizes.map((size, index) => {
+                const { width, height } = size;
+                const dataOffset = dataOffsets[index];
+                return { width, height, dataOffset };
+            });
 
             // Create a new data object by copying the old data and updating imageUrls
             const updatedData = {
                 ...data,
                 imageDatas: newImageDatas,
+                imageInfos: newImageInfos,
             };
             updateSprite(updatedData);
         }
