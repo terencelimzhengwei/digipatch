@@ -19,7 +19,7 @@ const UpdateSprite = props => {
     const toast = useToast();
 
     const onDrop = async acceptedFiles => {
-        const { imageDatas, imageInfos } = data;
+        const { imageDatas, imageInfos, spriteMetadata } = data;
         const newImageDatas = [...imageDatas];
         let indexError = false;
         let dimensionError = false;
@@ -84,6 +84,21 @@ const UpdateSprite = props => {
                 dataOffsets.push(dataOffsets[index] + imageLength);
                 return { width, height };
             });
+            if (
+                Number(spriteMetadata.SpritePackBase) + dataOffsets.slice(-1) >
+                Number(0x7fcfff)
+            ) {
+                toast({
+                    title: 'Over flash chip size limit',
+                    description:
+                        'There is insufficient space to store all your sprites in the flash chip',
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                    position: 'bottom-right',
+                });
+                return;
+            }
             const newImageInfos = imageSizes.map((size, index) => {
                 const { width, height } = size;
                 const dataOffset = dataOffsets[index];
