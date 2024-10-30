@@ -3,20 +3,22 @@ import { Wrap, WrapItem } from '@chakra-ui/react';
 import StageCard from './StageCard'; // Import the new StageCard component
 
 const generateQuests = (questMode, charInfos, imageDatas, isPenc = false) =>
-    questMode.map(level =>
-        level.map(enemy => {
-            const { CharacterID } = enemy;
-            const isValidCharacterID = isPenc
-                ? CharacterID !== 0
-                : CharacterID !== 65535;
-            return {
-                Sprite: isValidCharacterID
-                    ? imageDatas[charInfos[CharacterID].SpriteID].url
-                    : null,
-                attributes: { ...enemy },
-            };
-        })
-    );
+    questMode.map(level => {
+        return level
+            .map(enemy => {
+                const { CharacterID } = enemy;
+                const isValidCharacterID = isPenc
+                    ? CharacterID !== 0
+                    : CharacterID !== 65535;
+                return {
+                    Sprite: isValidCharacterID
+                        ? imageDatas[charInfos[CharacterID].SpriteID].url
+                        : null,
+                    attributes: { ...enemy },
+                };
+            })
+            .slice(0, isPenc ? 3 : 5);
+    });
 
 const QuestTable = ({ data, updateQuests }) => {
     const { questMode, charInfos, imageDatas, firmware } = data;
