@@ -49,6 +49,8 @@ const getAnimation = (buffer, spriteMetadata) => {
     return animation;
 };
 
+
+
 const getCharInfos = (arrayBuffer, spriteMetadata) => {
     const data = new DataView(arrayBuffer.slice(0));
     let offset = Number(spriteMetadata.StatTableLocation);
@@ -128,7 +130,7 @@ const getImages = (arrayBuffer, spriteMetadata, imageInfos) => {
 async function rebuild(data, patchFiles) {
     const buffer = data.buffer.slice(0);
     const dataView = new DataView(buffer);
-    const { spriteMetadata, imageInfos, charInfos, questMode, imageDatas } =
+    const { spriteMetadata, imageInfos, charInfos, questMode, imageDatas, animation } =
         data;
     if (patchFiles) {
         patchFiles.forEach(file => {
@@ -209,6 +211,31 @@ async function rebuild(data, patchFiles) {
             );
         });
     });
+
+    const { AnimationLocation, AnimationFrameInfo } = spriteMetadata;
+    const offset = Number(AnimationLocation);
+    animation.forEach((frame, index) => {
+        dataView.setUint16(
+            offset + index * AnimationFrameInfo.length * 2,
+            frame.spriteId,
+            true
+        )
+        dataView.setUint16(
+            offset + index * AnimationFrameInfo.length * 2 + 2,
+            frame.x,
+            true
+        )
+        dataView.setUint16(
+            offset + index * AnimationFrameInfo.length * 2 + 4,
+            frame.y,
+            true
+        )
+        dataView.setUint16(
+            offset + index * AnimationFrameInfo.length * 2 + 6,
+            frame.flip,
+            true
+        )
+    })
 
     return buffer;
 }
