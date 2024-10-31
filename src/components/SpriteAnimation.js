@@ -16,39 +16,25 @@ const SpriteAnimation = ({ sprites, animationSequence, frame = 0 }) => {
             }
         >
             <Box
-                width="100%" // Adjust size for smaller screens
-                height={`${(25 * 100) / 96}%`} // Maintain the 2:1 aspect ratio
-                maxW="96px"
-                maxH="25px"
-                borderBottom="1px dashed rgba(0,0,0,0.5)"
-            />
-            <Box
                 position="relative"
                 width="100%" // Adjust size for smaller screens
-                height={`${(48 * 100) / 96}%`} // Maintain the 2:1 aspect ratio
+                height={`100%`} // Maintain the 2:1 aspect ratio
                 maxW="96px"
-                maxH="48px"
-                overflowX={'hidden'}
+                maxH="96px"
+                overflow={'hidden'}
                 mx="auto" // Center the animation horizontally
             >
                 <Image
                     src={sprites[spriteId]}
                     width={`${(48 * 100) / 96}%`} // Adjust based on the screen size
-                    height={`${(48 * 100) / 48}%`}
+                    height={`${(48 * 100) / 96}%`}
                     position="absolute"
                     left={`${(x / 96) * 100}%`} // Calculate percentage-based position
-                    bottom={`${((y - 24) / 48) * 100}%`}
+                    bottom={`${(y / 96) * 100}%`}
                     transform={flip ? 'scaleX(-1)' : 'scaleX(1)'}
                     transformOrigin="center"
                 />
             </Box>
-            <Box
-                width="100%" // Adjust size for smaller screens
-                height={`${(24 * 100) / 96}%`} // Maintain the 2:1 aspect ratio
-                maxW="96px"
-                maxH="24px"
-                borderTop="1px dashed rgba(0,0,0,0.5)"
-            />
         </Box>
     );
 };

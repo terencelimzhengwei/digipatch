@@ -59,7 +59,7 @@ const MemoNumberInput = memo(
             value={value}
             min={0}
             max={96}
-            onChange={e => handleInputChange(frame, id, e.target.value)}
+            onChange={e => handleInputChange(frame, id, e)}
         >
             <NumberInputField />
             <NumberInputStepper>
