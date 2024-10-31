@@ -27,7 +27,7 @@ const SpriteAnimation = ({ sprites, animationSequence, frame = 0 }) => {
             >
                 <Divider
                     position="absolute"
-                    top="25%" // 24px from top of a 96px box is approximately 25%
+                    top={`${18*100/96}%`}// 24px from top of a 96px box is approximately 25%
                     width="100%"
                     border="0.8px dashed rgba(0,0,0,0.5)"
                 />
@@ -35,14 +35,14 @@ const SpriteAnimation = ({ sprites, animationSequence, frame = 0 }) => {
                 {/* Bottom Dashed Line */}
                 <Divider
                     position="absolute"
-                    bottom="25%" // 24px from bottom of a 96px box is approximately 25%
+                    bottom={`${18*100/96}%`} // 24px from bottom of a 96px box is approximately 25%
                     width="100%"
                     border="0.8px dashed rgba(0,0,0,0.5)"
                 />
                 <Image
                     src={sprites[spriteId]}
-                    width={`${(48 * 100) / 96}%`} // Adjust based on the screen size
-                    height={`${(48 * 100) / 96}%`}
+                    width={`${(64 * 100) / 96}%`} // Adjust based on the screen size
+                    height={`${(56 * 100) / 96}%`}
                     position="absolute"
                     left={`${(x / 96) * 100}%`} // Calculate percentage-based position
                     bottom={`${(y / 96) * 100}%`}
