@@ -29,22 +29,25 @@ const getQuestInfos = (arrayBuffer, spriteMetadata) => {
 };
 
 const getAnimation = (buffer, spriteMetadata) => {
-    console.log(spriteMetadata)
-    const { AnimationLocation, AnimationFrames, AnimationFrameInfo } = spriteMetadata;
+    const { AnimationLocation, AnimationFrames, AnimationFrameInfo } =
+        spriteMetadata;
     const data = new DataView(buffer.slice(0));
     const offset = Number(AnimationLocation);
     const animation = [];
     for (let i = 0; i < AnimationFrames; i++) {
-        const frame = AnimationFrameInfo.map((label, index)=>{
-            const obj = {}
-            obj[label] = data.getUint16(offset + i * AnimationFrameInfo.length * 2 + index * 2, true);
-            return obj
-        })
+        const frame = AnimationFrameInfo.map((label, index) => {
+            const obj = {};
+            obj[label] = data.getUint16(
+                offset + i * AnimationFrameInfo.length * 2 + index * 2,
+                true
+            );
+            return obj;
+        });
         const frameObj = Object.assign({}, ...frame);
         animation.push(frameObj);
     }
-    return animation
-}
+    return animation;
+};
 
 const getCharInfos = (arrayBuffer, spriteMetadata) => {
     const data = new DataView(arrayBuffer.slice(0));

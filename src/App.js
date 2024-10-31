@@ -96,6 +96,18 @@ function App() {
         setPatchFiles(patches);
     };
 
+    const updateAnimation = animation => {
+        setData({ ...data, animation });
+        toast({
+            title: 'Animations Updated',
+            description: 'Your sprites idle animation has been updated',
+            status: 'success',
+            duration: 9000,
+            isClosable: true,
+            position: 'bottom-right',
+        });
+    };
+
     const handleUpload = async arrayBuffer => {
         const originalData = await init(arrayBuffer);
         if (!originalData || !originalData.firmware) {
@@ -145,7 +157,12 @@ function App() {
     };
     return (
         <ChakraProvider theme={theme}>
-            <Box textAlign="center" fontSize="xl">
+            <Box
+                textAlign="center"
+                fontSize="xl"
+                w={['100%', '100%', '100%', '100%', '80%']}
+                mx="auto"
+            >
                 <Flex p={3} flexDir={'column'}>
                     <Nav
                         fileUploaded={originalData !== null}
@@ -173,7 +190,12 @@ function App() {
                         />
                     ) : null}
                     {page === 5 ? <About /> : null}
-                    {page === 6 ? <UpdateAnimation data={data} updateAnimation={null} /> : null}
+                    {page === 6 ? (
+                        <UpdateAnimation
+                            data={data}
+                            updateAnimation={updateAnimation}
+                        />
+                    ) : null}
                 </Flex>
             </Box>
         </ChakraProvider>

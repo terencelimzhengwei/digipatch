@@ -20,7 +20,12 @@ const Nav = props => {
     const [menuOpen, setMenuOpen] = useState(false);
 
     // Determine whether to display buttons or a hamburger menu based on screen size
-    const isMobile = useBreakpointValue({ base: true, md: true, lg: true, xl: false });
+    const isMobile = useBreakpointValue({
+        base: true,
+        md: true,
+        lg: true,
+        xl: false,
+    });
 
     const handleMenuClick = index => {
         navClick(index);
