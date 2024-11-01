@@ -79,7 +79,11 @@ const UpdateAnimation = ({ data, updateAnimation }) => {
     const sprites = charInfos.map(c => {
         return imageDatas
             .slice(c.SpriteID, c.SpriteID + spriteLabels.length)
-            .map(x => x.url);
+            .map(x => ({
+                url: x.url,
+                width: x.imageData.width,
+                height: x.imageData.height,
+            }));
     });
     const { spriteId, x, y, flip } = animation[frame];
 
