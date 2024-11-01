@@ -37,7 +37,7 @@ const SpriteAnimation = ({ sprites, animationSequence, frame = 0 }) => {
                 height={`${(sprites[spriteId].height * 100) / 96}%`}
                 position="absolute"
                 left={`${(x / 96) * 100}%`} // Calculate percentage-based position
-                bottom={`${(y / 96) * 100}%`}
+                top={`${(y / 96) * 100}%`}
                 transform={flip ? 'scaleX(-1)' : 'scaleX(1)'}
                 transformOrigin="center"
                 // border="1px dashed rgba(0,0,0,0.5)"
