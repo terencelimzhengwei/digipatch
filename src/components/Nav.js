@@ -45,22 +45,22 @@ const Nav = props => {
                     <MenuList fontSize={'sm'}>
                         {!fileUploaded && (
                             <MenuItem onClick={() => handleMenuClick(0)}>
-                                Upload BIN
+                                Home
                             </MenuItem>
                         )}
                         {fileUploaded && (
                             <>
                                 <MenuItem onClick={() => handleMenuClick(1)}>
-                                    Update Images
+                                    Images
                                 </MenuItem>
                                 <MenuItem onClick={() => handleMenuClick(2)}>
-                                    Update Stats
+                                    Characters
                                 </MenuItem>
                                 <MenuItem onClick={() => handleMenuClick(3)}>
-                                    Update Quest Mode
+                                    Quests
                                 </MenuItem>
                                 <MenuItem onClick={() => handleMenuClick(6)}>
-                                    Update Animations
+                                    Animations
                                 </MenuItem>
                                 <MenuItem onClick={() => handleMenuClick(4)}>
                                     Patches
@@ -81,7 +81,7 @@ const Nav = props => {
                             isActive={pageActive === 0}
                             onClick={() => navClick(0)}
                         >
-                            Upload BIN
+                            Home
                         </Button>
                     ) : null}
                     {fileUploaded ? (
@@ -92,7 +92,7 @@ const Nav = props => {
                                 isActive={pageActive === 1}
                                 onClick={() => navClick(1)}
                             >
-                                Update Images
+                                Images
                             </Button>
                             <Button
                                 fontSize={['sm', 'md']}
@@ -100,7 +100,7 @@ const Nav = props => {
                                 isActive={pageActive === 2}
                                 onClick={() => navClick(2)}
                             >
-                                Update Stats
+                                Characters
                             </Button>
                             <Button
                                 fontSize={['sm', 'md']}
@@ -108,7 +108,7 @@ const Nav = props => {
                                 isActive={pageActive === 3}
                                 onClick={() => navClick(3)}
                             >
-                                Update Quest Mode
+                                Quests
                             </Button>
                             <Button
                                 fontSize={['sm', 'md']}
@@ -116,7 +116,7 @@ const Nav = props => {
                                 isActive={pageActive === 6}
                                 onClick={() => navClick(6)}
                             >
-                                Update Idle Animation
+                                Animations
                             </Button>
                             <Button
                                 fontSize={['sm', 'md']}
