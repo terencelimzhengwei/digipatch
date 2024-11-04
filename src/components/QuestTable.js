@@ -4,20 +4,19 @@ import StageCard from './StageCard'; // Import the new StageCard component
 
 const generateQuests = (questMode, charInfos, imageDatas, isPenc = false) =>
     questMode.map(level => {
-        return level
-            .map(enemy => {
-                const { CharacterID } = enemy;
-                const isValidCharacterID = isPenc
-                    ? CharacterID !== 0
-                    : CharacterID !== 65535;
-                return {
-                    Sprite: isValidCharacterID
-                        ? imageDatas[charInfos[CharacterID].SpriteID].url
-                        : null,
-                    attributes: { ...enemy },
-                };
-            })
-            .slice(0, isPenc ? 3 : 5);
+        return level.map(enemy => {
+            const { CharacterID } = enemy;
+            const isValidCharacterID = isPenc
+                ? CharacterID !== 0
+                : CharacterID !== 65535;
+            return {
+                Sprite: isValidCharacterID
+                    ? imageDatas[charInfos[CharacterID].SpriteID].url
+                    : null,
+                attributes: { ...enemy },
+            };
+        });
+        // .slice(0, isPenc ? 3 : 5);
     });
 
 const QuestTable = ({ data, updateQuests }) => {
@@ -37,10 +36,12 @@ const QuestTable = ({ data, updateQuests }) => {
             {quests.map((stage, stageIndex) => (
                 <WrapItem key={stageIndex}>
                     <StageCard
+                        key={`${stageIndex}-stagecard`}
                         stage={stage}
                         stageIndex={stageIndex}
                         numChars={charInfos.length}
                         updateStage={updateStage}
+                        isPenc={isPenc}
                     />
                 </WrapItem>
             ))}

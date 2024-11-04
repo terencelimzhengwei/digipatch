@@ -12,9 +12,17 @@ import {
 } from '@chakra-ui/react';
 import { pattern, valueToPattern } from '../config/pattern';
 
-const StageCard = ({ stage, stageIndex, numChars, updateStage }) => {
+const StageCard = ({
+    stage,
+    stageIndex,
+    numChars,
+    updateStage,
+    isPenc = false,
+}) => {
     const [editStage, setEditStage] = useState(false);
     const [stageData, setStageData] = useState(stage);
+
+    const filteredStage = stage.slice(0, isPenc ? 3 : 5);
 
     // Toggle edit mode
     const toggleEdit = () => {
@@ -64,7 +72,7 @@ const StageCard = ({ stage, stageIndex, numChars, updateStage }) => {
                 flexWrap="wrap" // Allow wrapping on smaller screens
                 justifyContent="center"
             >
-                {stage.map((character, charIndex) => (
+                {filteredStage.map((character, charIndex) => (
                     <Flex
                         key={charIndex}
                         direction="column"
