@@ -28,7 +28,7 @@ const UpdateSprite = props => {
             const promises = acceptedFiles.map(async f => {
                 const { name, imageData, rgb565 } = await getImageDetails(f);
                 const index = parseInt(name.split('.')[0]);
-                if (!index) {
+                if (index == null) {
                     indexError = true;
                     return;
                 }
