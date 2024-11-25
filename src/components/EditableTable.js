@@ -172,10 +172,10 @@ const EditableTable = ({ data, updateCharInfos }) => {
         generateCharacters(charInfos, imageDatas)
     );
     const [editRowIndex, setEditRowIndex] = useState(null);
-    const [sortConfig, setSortConfig] = useState({
-        key: null,
-        direction: 'asc',
-    });
+    // const [sortConfig, setSortConfig] = useState({
+    //     key: null,
+    //     direction: 'asc',
+    // });
 
     const handleEditClick = (index, rowData) => {
         setEditRowIndex(index);
@@ -195,24 +195,24 @@ const EditableTable = ({ data, updateCharInfos }) => {
         setEditRowIndex(null);
     };
 
-    const handleSort = key => {
-        let direction = 'asc';
-        if (sortConfig.key === key && sortConfig.direction === 'asc') {
-            direction = 'desc';
-        }
-        setSortConfig({ key, direction });
+    // const handleSort = key => {
+    //     let direction = 'asc';
+    //     if (sortConfig.key === key && sortConfig.direction === 'asc') {
+    //         direction = 'desc';
+    //     }
+    //     setSortConfig({ key, direction });
 
-        const sortedData = [...tableData].sort((a, b) => {
-            const aValue = key in a.attributes ? a.attributes[key] : a[key];
-            const bValue = key in b.attributes ? b.attributes[key] : b[key];
+    //     const sortedData = [...tableData].sort((a, b) => {
+    //         const aValue = key in a.attributes ? a.attributes[key] : a[key];
+    //         const bValue = key in b.attributes ? b.attributes[key] : b[key];
 
-            if (aValue < bValue) return direction === 'asc' ? -1 : 1;
-            if (aValue > bValue) return direction === 'asc' ? 1 : -1;
-            return 0;
-        });
+    //         if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+    //         if (aValue > bValue) return direction === 'asc' ? 1 : -1;
+    //         return 0;
+    //     });
 
-        setTableData(sortedData);
-    };
+    //     setTableData(sortedData);
+    // };
 
     return (
         <Box
@@ -244,10 +244,10 @@ const EditableTable = ({ data, updateCharInfos }) => {
                                 cursor="pointer"
                             >
                                 {stat}
-                                {sortConfig.key === stat &&
+                                {/* {sortConfig.key === stat &&
                                     (sortConfig.direction === 'asc'
                                         ? '\u00A0▲'
-                                        : '\u00A0▼')}
+                                        : '\u00A0▼')} */}
                             </Th>
                         ))}
                     </Tr>
