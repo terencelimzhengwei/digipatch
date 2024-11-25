@@ -1,6 +1,7 @@
 import { arrayBufferToImageData } from './imageUtils';
 import metadata from '../config/metadata.json';
 import firmwareChecker from './firmwareChecker';
+import JSZip from 'jszip';
 import PATCHES from '../patch/patches';
 
 const getQuestInfos = (arrayBuffer, spriteMetadata) => {
@@ -124,6 +125,26 @@ const getImages = (arrayBuffer, spriteMetadata, imageInfos) => {
 //     // Create a link element and trigger download
 //     downloadFile(URL.createObjectURL(content), 'images.zip')
 // };
+
+const downloadZip = async (arrayBuffer, spriteUrls) => {
+    const zip = new JSZip();
+    const folder = zip.folder('images'); // Create a folder inside the zip
+
+    // Convert dataURLs to binary and add them to the zip
+    spriteUrls.forEach((dataUrl, index) => {
+        const base64Data = dataUrl.split(',')[1]; // Strip the base64 header
+        const imgFileName = `${index}.png`; // Name for the image file
+        folder.file(imgFileName, base64Data, { base64: true });
+    });
+
+    const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
+    zip.file('output.bin', blob);
+
+    // Generate the zip file
+    const content = await zip.generateAsync({ type: 'blob' });
+    // Create a link element and trigger download
+    downloadFile(URL.createObjectURL(content), 'patched_bin.zip');
+};
 
 async function rebuild(data, patchFiles) {
     const buffer = data.buffer.slice(0);
@@ -323,4 +344,4 @@ const getPatches = originalData => {
     });
     return statusPatchFiles;
 };
-export { init, downloadBIN, rebuild, getPatches };
+export { init, downloadZip, rebuild, getPatches };

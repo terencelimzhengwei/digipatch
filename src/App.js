@@ -9,7 +9,7 @@ import {
 import Nav from './components/Nav';
 import UploadBIN from './components/UploadBIN';
 import UpdateSprite from './components/UpdateSprite';
-import { init, rebuild, downloadBIN, getPatches } from './utils/analyzer';
+import { init, rebuild, downloadZip, getPatches } from './utils/analyzer';
 import UpdateStats from './components/UpdateStats';
 import UpdateQuest from './components/UpdateQuest';
 import UpdateAnimation from './components/UpdateAnimation';
@@ -44,8 +44,9 @@ function App() {
     const buildClick = async () => {
         const buffer = await rebuild(data, patchFiles);
         const newData = { ...data, buffer: buffer.slice(0) };
+        const imageUrls = data.imageDatas.map(x => x.url);
         setData(newData);
-        downloadBIN(newData.buffer);
+        downloadZip(newData.buffer, imageUrls);
         toast({
             title: 'BIN built and downloaded',
             description: 'The updated bin has been downloaded as output.bin',
