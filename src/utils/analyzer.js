@@ -273,13 +273,13 @@ const downloadFile = (url, filename) => {
 };
 
 // Function to convert ArrayBuffer to a binary file and trigger download
-const downloadBIN = (arrayBuffer, filename = 'output.bin') => {
-    // Step 1: Create a Blob from the ArrayBuffer
-    const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
-    // Step 2: Create a URL for the Blob
-    const url = URL.createObjectURL(blob);
-    downloadFile(url, filename);
-};
+// const downloadBIN = (arrayBuffer, filename = 'output.bin') => {
+//     // Step 1: Create a Blob from the ArrayBuffer
+//     const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
+//     // Step 2: Create a URL for the Blob
+//     const url = URL.createObjectURL(blob);
+//     downloadFile(url, filename);
+// };
 
 const init = async arrayBuffer => {
     const buffer = arrayBuffer.slice(0);
