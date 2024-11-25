@@ -76,7 +76,7 @@ const EditableRow = ({
                 {editRowIndex === rowIndex ? (
                     <IconButton
                         icon={<CheckIcon />}
-                        colorScheme='teal'
+                        colorScheme="teal"
                         onClick={saveChanges}
                         aria-label="Save"
                         size="sm"
@@ -84,7 +84,7 @@ const EditableRow = ({
                 ) : (
                     <IconButton
                         icon={<EditIcon />}
-                        onClick={() => handleEditClick(rowIndex, row)}
+                        onClick={() => handleEditClick(row.index)}
                         aria-label="Edit"
                         size="sm"
                     />
@@ -109,15 +109,9 @@ const EditableRow = ({
                     key={`td-${key}`}
                     textAlign="center"
                     verticalAlign="middle"
-                    onClick={() => handleEditClick(rowIndex, row)}
-                    onKeyDown={e =>
-                        handleKeyDown(
-                            e,
-                            rowIndex,
-                            row.attributes
-                        )
-                    }
-                    cursor='pointer'
+                    onClick={() => handleEditClick(row.index)}
+                    onKeyDown={e => handleKeyDown(e, row.index, row.attributes)}
+                    cursor="pointer"
                 >
                     <EditableCell
                         index={key}
@@ -132,8 +126,8 @@ const EditableRow = ({
     );
 };
 
-const generateCharacters = (charInfos, imageDatas) => {
-    return charInfos.map((info, index) => {
+const generateCharacters = (charInfos, imageDatas, sortConfig) => {
+    const characters = charInfos.map((info, index) => {
         return {
             index,
             attributes: info,
@@ -148,6 +142,16 @@ const generateCharacters = (charInfos, imageDatas) => {
                     : null,
         };
     });
+
+    if (sortConfig.key) {
+        return characters.sort((a, b) =>
+            sortConfig.direction === 'desc'
+                ? b[sortConfig.key] - a[sortConfig.key]
+                : a[sortConfig.key] - b[sortConfig.key]
+        ); // Sort descending by score;
+    } else {
+        return characters;
+    }
 };
 
 const generateCharacter = (previousCharacter, newAttributes, imageDatas) => {
@@ -168,23 +172,26 @@ const generateCharacter = (previousCharacter, newAttributes, imageDatas) => {
 
 const EditableTable = ({ data, updateCharInfos }) => {
     const { charInfos, imageDatas } = data;
-    const [tableData, setTableData] = useState(
-        generateCharacters(charInfos, imageDatas)
-    );
     const [editRowIndex, setEditRowIndex] = useState(null);
-    // const [sortConfig, setSortConfig] = useState({
-    //     key: null,
-    //     direction: 'asc',
-    // });
+    const [sortConfig, setSortConfig] = useState({
+        key: null,
+        direction: 'asc',
+    });
+    const [tableData, setTableData] = useState(
+        generateCharacters(charInfos, imageDatas, sortConfig)
+    );
 
-    const handleEditClick = (index, rowData) => {
+    const handleEditClick = index => {
         setEditRowIndex(index);
     };
 
     const handleSaveClick = (rowIndex, newAttributes) => {
         const updatedTableData = [...tableData];
-        updatedTableData[rowIndex] = generateCharacter(
-            updatedTableData[rowIndex],
+        const foundIndex = updatedTableData.findIndex(
+            item => item.index === rowIndex
+        );
+        updatedTableData[foundIndex] = generateCharacter(
+            updatedTableData[foundIndex],
             newAttributes,
             imageDatas
         );
@@ -195,24 +202,24 @@ const EditableTable = ({ data, updateCharInfos }) => {
         setEditRowIndex(null);
     };
 
-    // const handleSort = key => {
-    //     let direction = 'asc';
-    //     if (sortConfig.key === key && sortConfig.direction === 'asc') {
-    //         direction = 'desc';
-    //     }
-    //     setSortConfig({ key, direction });
+    const handleSort = key => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
 
-    //     const sortedData = [...tableData].sort((a, b) => {
-    //         const aValue = key in a.attributes ? a.attributes[key] : a[key];
-    //         const bValue = key in b.attributes ? b.attributes[key] : b[key];
+        const sortedData = [...tableData].sort((a, b) => {
+            const aValue = key in a.attributes ? a.attributes[key] : a[key];
+            const bValue = key in b.attributes ? b.attributes[key] : b[key];
 
-    //         if (aValue < bValue) return direction === 'asc' ? -1 : 1;
-    //         if (aValue > bValue) return direction === 'asc' ? 1 : -1;
-    //         return 0;
-    //     });
+            if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return direction === 'asc' ? 1 : -1;
+            return 0;
+        });
 
-    //     setTableData(sortedData);
-    // };
+        setTableData(sortedData);
+    };
 
     return (
         <Box
@@ -229,9 +236,13 @@ const EditableTable = ({ data, updateCharInfos }) => {
                         <Th
                             cursor="pointer"
                             textAlign="center"
-                            // onClick={() => handleSort('index')}
+                            onClick={() => handleSort('index')}
                         >
                             ID
+                            {sortConfig.key === 'index' &&
+                                (sortConfig.direction === 'asc'
+                                    ? '\u00A0▲'
+                                    : '\u00A0▼')}
                         </Th>
                         <Th textAlign="center">Sprite</Th>
                         <Th textAlign="center">AtkSprite</Th>
@@ -240,14 +251,14 @@ const EditableTable = ({ data, updateCharInfos }) => {
                             <Th
                                 key={`header-${index}`}
                                 textAlign="center"
-                                // onClick={() => handleSort(stat)}
+                                onClick={() => handleSort(stat)}
                                 cursor="pointer"
                             >
                                 {stat}
-                                {/* {sortConfig.key === stat &&
+                                {sortConfig.key === stat &&
                                     (sortConfig.direction === 'asc'
                                         ? '\u00A0▲'
-                                        : '\u00A0▼')} */}
+                                        : '\u00A0▼')}
                             </Th>
                         ))}
                     </Tr>
@@ -255,9 +266,9 @@ const EditableTable = ({ data, updateCharInfos }) => {
                 <Tbody>
                     {tableData.map((row, rowIndex) => (
                         <EditableRow
-                            key={rowIndex}
+                            key={row.index}
                             row={row}
-                            rowIndex={rowIndex}
+                            rowIndex={row.index}
                             editRowIndex={editRowIndex}
                             handleSaveClick={handleSaveClick}
                             handleEditClick={handleEditClick}
