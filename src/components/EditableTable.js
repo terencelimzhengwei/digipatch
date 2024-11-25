@@ -66,7 +66,7 @@ const EditableRow = ({
     return (
         <Tr key={`row-${rowIndex}`}>
             <Td textAlign="center" verticalAlign="middle">
-                {rowIndex}
+                {row.index}
             </Td>
             <Td minWidth={20} textAlign="center" verticalAlign="middle">
                 <ImageCell rowIndex={rowIndex} src={row.SpriteImage} />
@@ -156,6 +156,10 @@ const EditableTable = ({ data, updateCharInfos }) => {
         generateCharacters(charInfos, imageDatas)
     );
     const [editRowIndex, setEditRowIndex] = useState(null);
+    const [sortConfig, setSortConfig] = useState({
+        key: null,
+        direction: 'asc',
+    });
 
     const handleEditClick = (index, rowData) => {
         setEditRowIndex(index);
@@ -167,12 +171,31 @@ const EditableTable = ({ data, updateCharInfos }) => {
             updatedTableData[rowIndex],
             newAttributes,
             imageDatas
-        ); // Apply changes from editedRowData to tableData
+        );
         setTableData(updatedTableData);
         const attributes = updatedTableData.map(row => row.attributes);
         const updatedData = { ...data, charInfos: attributes };
         updateCharInfos(updatedData);
-        setEditRowIndex(null); // Reset editRowIndex after saving
+        setEditRowIndex(null);
+    };
+
+    const handleSort = key => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+
+        const sortedData = [...tableData].sort((a, b) => {
+            const aValue = key in a.attributes ? a.attributes[key] : a[key];
+            const bValue = key in b.attributes ? b.attributes[key] : b[key];
+
+            if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        setTableData(sortedData);
     };
 
     return (
@@ -186,13 +209,28 @@ const EditableTable = ({ data, updateCharInfos }) => {
             <Table variant="simple" size="sm">
                 <Thead>
                     <Tr>
-                        <Th textAlign="center">ID</Th>
+                        <Th
+                            cursor="pointer"
+                            textAlign="center"
+                            onClick={() => handleSort('index')}
+                        >
+                            ID
+                        </Th>
                         <Th textAlign="center">Sprite</Th>
                         <Th textAlign="center">AtkSprite</Th>
                         <Th textAlign="center">AltAtkSprite</Th>
                         {data.spriteMetadata.Stats.map((stat, index) => (
-                            <Th key={`header-${index}`} textAlign="center">
+                            <Th
+                                key={`header-${index}`}
+                                textAlign="center"
+                                onClick={() => handleSort(stat)}
+                                cursor="pointer"
+                            >
                                 {stat}
+                                {sortConfig.key === stat &&
+                                    (sortConfig.direction === 'asc'
+                                        ? '\u00A0▲'
+                                        : '\u00A0▼')}
                             </Th>
                         ))}
                         <Th textAlign="center">Edit</Th>
