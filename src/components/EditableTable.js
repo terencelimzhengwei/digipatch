@@ -76,7 +76,7 @@ const EditableRow = ({
                 {editRowIndex === rowIndex ? (
                     <IconButton
                         icon={<CheckIcon />}
-                        colorScheme="teal"
+                        colorScheme='teal'
                         onClick={saveChanges}
                         aria-label="Save"
                         size="sm"
@@ -110,8 +110,14 @@ const EditableRow = ({
                     textAlign="center"
                     verticalAlign="middle"
                     onClick={() => handleEditClick(rowIndex, row)}
-                    onKeyDown={e => handleKeyDown(e, rowIndex, row.attributes)}
-                    cursor="pointer"
+                    onKeyDown={e =>
+                        handleKeyDown(
+                            e,
+                            rowIndex,
+                            row.attributes
+                        )
+                    }
+                    cursor='pointer'
                 >
                     <EditableCell
                         index={key}
@@ -219,15 +225,7 @@ const EditableTable = ({ data, updateCharInfos }) => {
             <Table variant="simple" size="sm">
                 <Thead>
                     <Tr>
-                        <Th
-                            textAlign="center"
-                            position="sticky"
-                            left={0}
-                            zIndex={1}
-                            bg="gray.800"
-                        >
-                            Edit
-                        </Th>
+                        <Th textAlign="center">Edit</Th>
                         <Th
                             cursor="pointer"
                             textAlign="center"
