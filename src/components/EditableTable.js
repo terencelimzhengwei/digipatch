@@ -23,6 +23,7 @@ const EditableCell = memo(
                     onChange={e => handleInputChange(e, index)}
                     size="sm"
                     textAlign="center"
+                    minWidth={50}
                 />
             );
         }
@@ -63,42 +64,19 @@ const EditableRow = ({
         handleSaveClick(rowIndex, localRowData);
     };
 
+    const handleKeyDown = (e, rowIndex) => {
+        if (e.key === 'Enter') {
+            handleSaveClick(rowIndex, localRowData);
+        }
+    };
+
     return (
         <Tr key={`row-${rowIndex}`}>
-            <Td textAlign="center" verticalAlign="middle">
-                {row.index}
-            </Td>
-            <Td minWidth={20} textAlign="center" verticalAlign="middle">
-                <ImageCell rowIndex={rowIndex} src={row.SpriteImage} />
-            </Td>
-            <Td minWidth={20} textAlign="center" verticalAlign="middle">
-                <ImageCell rowIndex={rowIndex} src={row.AttackImage} />
-            </Td>
-            <Td minWidth={20} textAlign="center" verticalAlign="middle">
-                {row.AltAttackImage ? (
-                    <ImageCell rowIndex={rowIndex} src={row.AltAttackImage} />
-                ) : null}
-            </Td>
-            {Object.keys(row.attributes).map(key => (
-                <Td
-                    minWidth={20}
-                    key={`td-${key}`}
-                    textAlign="center"
-                    verticalAlign="middle"
-                >
-                    <EditableCell
-                        index={key}
-                        inputValue={localRowData[key]}
-                        rawValue={row.attributes[key]}
-                        isEdit={editRowIndex === rowIndex}
-                        handleInputChange={handleInputChange}
-                    />
-                </Td>
-            ))}
             <Td textAlign="center" verticalAlign="middle">
                 {editRowIndex === rowIndex ? (
                     <IconButton
                         icon={<CheckIcon />}
+                        colorScheme="teal"
                         onClick={saveChanges}
                         aria-label="Save"
                         size="sm"
@@ -112,6 +90,38 @@ const EditableRow = ({
                     />
                 )}
             </Td>
+            <Td textAlign="center" verticalAlign="middle">
+                {row.index}
+            </Td>
+            <Td textAlign="center" verticalAlign="middle">
+                <ImageCell rowIndex={rowIndex} src={row.SpriteImage} />
+            </Td>
+            <Td textAlign="center" verticalAlign="middle">
+                <ImageCell rowIndex={rowIndex} src={row.AttackImage} />
+            </Td>
+            <Td textAlign="center" verticalAlign="middle">
+                {row.AltAttackImage ? (
+                    <ImageCell rowIndex={rowIndex} src={row.AltAttackImage} />
+                ) : null}
+            </Td>
+            {Object.keys(row.attributes).map(key => (
+                <Td
+                    key={`td-${key}`}
+                    textAlign="center"
+                    verticalAlign="middle"
+                    onClick={() => handleEditClick(rowIndex, row)}
+                    onKeyDown={e => handleKeyDown(e, rowIndex, row.attributes)}
+                    cursor="pointer"
+                >
+                    <EditableCell
+                        index={key}
+                        inputValue={localRowData[key]}
+                        rawValue={row.attributes[key]}
+                        isEdit={editRowIndex === rowIndex}
+                        handleInputChange={handleInputChange}
+                    />
+                </Td>
+            ))}
         </Tr>
     );
 };
@@ -210,6 +220,15 @@ const EditableTable = ({ data, updateCharInfos }) => {
                 <Thead>
                     <Tr>
                         <Th
+                            textAlign="center"
+                            position="sticky"
+                            left={0}
+                            zIndex={1}
+                            bg="gray.800"
+                        >
+                            Edit
+                        </Th>
+                        <Th
                             cursor="pointer"
                             textAlign="center"
                             onClick={() => handleSort('index')}
@@ -233,7 +252,6 @@ const EditableTable = ({ data, updateCharInfos }) => {
                                         : '\u00A0▼')}
                             </Th>
                         ))}
-                        <Th textAlign="center">Edit</Th>
                     </Tr>
                 </Thead>
                 <Tbody>
