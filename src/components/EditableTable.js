@@ -229,7 +229,7 @@ const EditableTable = ({ data, updateCharInfos }) => {
                         <Th
                             cursor="pointer"
                             textAlign="center"
-                            onClick={() => handleSort('index')}
+                            // onClick={() => handleSort('index')}
                         >
                             ID
                         </Th>
@@ -240,7 +240,7 @@ const EditableTable = ({ data, updateCharInfos }) => {
                             <Th
                                 key={`header-${index}`}
                                 textAlign="center"
-                                onClick={() => handleSort(stat)}
+                                // onClick={() => handleSort(stat)}
                                 cursor="pointer"
                             >
                                 {stat}
