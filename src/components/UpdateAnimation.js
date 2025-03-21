@@ -26,7 +26,6 @@ const MemoSpriteSelect = memo(
     ({ spriteLabels, frame, id, value, handleInputChange }) => {
         return (
             <Select
-                placeholder="Select option"
                 value={value}
                 onChange={e => handleInputChange(frame, id, e.target.value)}
             >
@@ -42,7 +41,6 @@ const MemoSpriteSelect = memo(
 
 const MemoFlipSelect = memo(({ frame, id, value, handleInputChange }) => (
     <Select
-        placeholder="Select option"
         value={value}
         onChange={e => handleInputChange(frame, id, e.target.value)}
     >
