@@ -111,6 +111,7 @@ function App() {
 
     const handleUpload = async arrayBuffer => {
         const originalData = await init(arrayBuffer);
+        console.log(originalData)
         if (!originalData || !originalData.firmware) {
             toast({
                 title: 'Invalid BIN File',
