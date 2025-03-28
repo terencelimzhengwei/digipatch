@@ -58,6 +58,17 @@ function App() {
     };
 
     const updateSprite = data => {
+        if (data.buffer.length > 8388608){
+            toast({
+                title: 'Sprites not updated',
+                description: 'Sprites not updated as it goes beyond the 8MB limit available. This may be due to using Character Sprites above 48x48, or adding too many new sprites.',
+                status: 'error',
+                duration: 9000,
+                isClosable: true,
+                position: 'bottom-right',
+            });
+            return
+        }
         setData(data);
         toast({
             title: 'Sprites Updated',
