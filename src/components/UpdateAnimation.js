@@ -88,7 +88,7 @@ const UpdateAnimation = ({ data, updateAnimation }) => {
     // Handle saving updates from StageCard
     const updateNewAnimation = (frame, key, value) => {
         const copiedAnimation = [...newAnimation];
-        copiedAnimation[frame][key] = value;
+        copiedAnimation[frame][key] = Number(value);
         setNewAnimation(copiedAnimation);
     };
 
