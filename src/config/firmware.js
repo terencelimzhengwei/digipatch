@@ -583,7 +583,6 @@ const FIRMWARES = [
         identifierFunction: dataView => {
             const position = 0x172fc;
             const creditsPosition = 0x7fffda;
-            console.log(dataView.getUint16(creditsPosition, true))
             return (
                 dataView.getUint16(position, true) === 0x9641 &&
                 dataView.getUint16(position + 2, true) === 0xfe00 &&
