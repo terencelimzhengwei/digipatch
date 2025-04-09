@@ -14,7 +14,7 @@ import {
 import { CheckIcon, EditIcon } from '@chakra-ui/icons';
 
 const EditableCell = memo(
-    ({ index, inputValue, rawValue, isEdit, handleInputChange }) => {
+    ({ index, inputValue, rawValue, isEdit, handleInputChange, isName = false }) => {
         if (isEdit) {
             return (
                 <Input
@@ -24,6 +24,11 @@ const EditableCell = memo(
                     size="sm"
                     textAlign="center"
                     minWidth={50}
+                    maxLength={isName ? 16 : undefined}
+                    pattern={isName ? '[A-Z_]*' : undefined}
+                    onInput={isName ? (e) => {
+                        e.target.value = e.target.value.toUpperCase().replace(/[^A-Z_]/g, '');
+                    } : undefined}
                 />
             );
         }
@@ -52,21 +57,26 @@ const EditableRow = ({
     handleEditClick,
 }) => {
     const [localRowData, setLocalRowData] = useState(row.attributes); // Local state for row data
+    const [localName, setLocalName] = useState(row.name || ''); // Local state for name
 
     const handleInputChange = (e, key) => {
-        setLocalRowData({
-            ...localRowData,
-            [key]: Number(e.target.value),
-        });
+        if (key === 'name') {
+            setLocalName(e.target.value);
+        } else {
+            setLocalRowData({
+                ...localRowData,
+                [key]: Number(e.target.value),
+            });
+        }
     };
 
     const saveChanges = () => {
-        handleSaveClick(rowIndex, localRowData);
+        handleSaveClick(rowIndex, localRowData, localName);
     };
 
     const handleKeyDown = (e, rowIndex) => {
         if (e.key === 'Enter') {
-            handleSaveClick(rowIndex, localRowData);
+            handleSaveClick(rowIndex, localRowData, localName);
         }
     };
 
@@ -96,6 +106,24 @@ const EditableRow = ({
             <Td textAlign="center" verticalAlign="middle">
                 <ImageCell rowIndex={rowIndex} src={row.SpriteImage} />
             </Td>
+            {row.showName && (
+                <Td
+                    textAlign="center"
+                    verticalAlign="middle"
+                    onClick={() => handleEditClick(row.index)}
+                    onKeyDown={e => handleKeyDown(e, row.index)}
+                    cursor="pointer"
+                >
+                    <EditableCell
+                        index="name"
+                        inputValue={localName}
+                        rawValue={row.name}
+                        isEdit={editRowIndex === rowIndex}
+                        handleInputChange={handleInputChange}
+                        isName={true}
+                    />
+                </Td>
+            )}
             <Td textAlign="center" verticalAlign="middle">
                 <ImageCell rowIndex={rowIndex} src={row.AttackImage} />
             </Td>
@@ -126,11 +154,13 @@ const EditableRow = ({
     );
 };
 
-const generateCharacters = (charInfos, imageDatas, sortConfig) => {
+const generateCharacters = (charInfos, imageDatas, sortConfig, names = [], isPencPlus = false) => {
     const characters = charInfos.map((info, index) => {
         return {
             index,
             attributes: info,
+            name: names[index] || '',
+            showName: isPencPlus,
             SpriteImage: imageDatas[info.SpriteID].url,
             AttackImage:
                 info.AttackSprite < imageDatas.length
@@ -171,33 +201,38 @@ const generateCharacter = (previousCharacter, newAttributes, imageDatas) => {
 };
 
 const EditableTable = ({ data, updateCharInfos }) => {
-    const { charInfos, imageDatas } = data;
+    const { charInfos, imageDatas, names = [], firmware } = data;
+    const isPencPlus = firmware.id.includes('+');
     const [editRowIndex, setEditRowIndex] = useState(null);
     const [sortConfig, setSortConfig] = useState({
         key: null,
         direction: 'asc',
     });
     const [tableData, setTableData] = useState(
-        generateCharacters(charInfos, imageDatas, sortConfig)
+        generateCharacters(charInfos, imageDatas, sortConfig, names, isPencPlus)
     );
 
     const handleEditClick = index => {
         setEditRowIndex(index);
     };
 
-    const handleSaveClick = (rowIndex, newAttributes) => {
+    const handleSaveClick = (rowIndex, newAttributes, newName) => {
         const updatedTableData = [...tableData];
         const foundIndex = updatedTableData.findIndex(
             item => item.index === rowIndex
         );
-        updatedTableData[foundIndex] = generateCharacter(
-            updatedTableData[foundIndex],
-            newAttributes,
-            imageDatas
-        );
+        updatedTableData[foundIndex] = {
+            ...generateCharacter(
+                updatedTableData[foundIndex],
+                newAttributes,
+                imageDatas
+            ),
+            name: newName
+        };
         setTableData(updatedTableData);
         const attributes = updatedTableData.map(row => row.attributes);
-        const updatedData = { ...data, charInfos: attributes };
+        const names = updatedTableData.map(row => row.name);
+        const updatedData = { ...data, charInfos: attributes, names };
         updateCharInfos(updatedData);
         setEditRowIndex(null);
     };
@@ -245,6 +280,9 @@ const EditableTable = ({ data, updateCharInfos }) => {
                                     : '\u00A0▼')}
                         </Th>
                         <Th textAlign="center">Sprite</Th>
+                        {data.firmware.id.includes('+') && (
+                            <Th textAlign="center">Name</Th>
+                        )}
                         <Th textAlign="center">AtkSprite</Th>
                         <Th textAlign="center">AltAtkSprite</Th>
                         {data.spriteMetadata.Stats.map((stat, index) => (

@@ -3,7 +3,14 @@ import EditableTable from './EditableTable';
 
 const UpdateStats = ({ data, updateData }) => {
     const updateCharInfos = newData => {
-        updateData(newData);
+        // If we're on PenC+ firmware and names were updated, update them in the data
+        if (data.firmware.id.includes('+')) {
+            updateData(newData);
+        } else {
+            // For non-PenC+ firmware, strip out names to avoid saving them
+            const { names, ...rest } = newData;
+            updateData(rest);
+        }
     };
 
     return (
