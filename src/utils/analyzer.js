@@ -179,6 +179,7 @@ async function rebuild(data, patchFiles) {
         questMode,
         imageDatas,
         animation,
+        names
     } = data;
     if (patchFiles) {
         patchFiles.forEach(file => {
@@ -283,6 +284,25 @@ async function rebuild(data, patchFiles) {
             frame.flip,
             true
         );
+    });
+
+    const { DigimonNameLocation, MaxNameLength } = spriteMetadata;
+    const NameOffset = Number(DigimonNameLocation);
+    names.forEach((name, i) => {
+        const charCodes = Array.from(name).map(char => char.charCodeAt(0))
+        charCodes.push(0); // add null terminator
+        while (charCodes.length < MaxNameLength) {
+            charCodes.push(255);
+        }
+        console.log(name)
+        console.log(charCodes)
+        charCodes.forEach((c, index)=> {
+            dataView.setUint8(
+                NameOffset + i * MaxNameLength * 2 + index * 2,
+                c,
+                true
+            );
+        })
     });
 
     return buffer;
