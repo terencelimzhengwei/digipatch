@@ -159,7 +159,11 @@ function App() {
             setPage(1);
             toast({
                 title: `Modified ${originalData.firmware.name} detected`,
-                description: `Firmware identified to be a modified ${originalData.firmware.name} as it failed region checks. Do note that app might not work correctly if you have added additional sprites or included sprites of different sizes than the original`,
+                description: (
+                    originalData.firmware.id.includes('+') ?
+                    `Firmware is a modified ${originalData.firmware.name} that uses Kurozatou's PenC+ mod`:
+                    `Firmware is a modified ${originalData.firmware.name}`
+                ),
                 status: 'warning',
                 duration: 9000,
                 isClosable: true,
