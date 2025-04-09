@@ -209,6 +209,66 @@ const PATCHES = {
             enabled: false,
         },
     ],
+    "penc1+": [
+        {
+            name: SCROLLFIXNAME,
+            description: SCROLLFIXDESC,
+            creator: KUROZATOU,
+            webpage: KUROZATOU_KOFI,
+            diff: diffs.penc1.scrollfix,
+            enabled: false,
+        }
+    ],
+    "penc2+": [
+        {
+            name: SCROLLFIXNAME,
+            description: SCROLLFIXDESC,
+            creator: KUROZATOU,
+            webpage: KUROZATOU_KOFI,
+            diff: diffs.penc2.scrollfix,
+            enabled: false,
+        }
+    ],
+    "penc3+": [
+        {
+            name: SCROLLFIXNAME,
+            description: SCROLLFIXDESC,
+            creator: KUROZATOU,
+            webpage: KUROZATOU_KOFI,
+            diff: diffs.penc3.scrollfix,
+            enabled: false,
+        }
+    ],
+    "penc4+": [
+        {
+            name: SCROLLFIXNAME,
+            description: SCROLLFIXDESC,
+            creator: KUROZATOU,
+            webpage: KUROZATOU_KOFI,
+            diff: diffs.penc4.scrollfix,
+            enabled: false,
+        }
+    ],
+    "penc5+": [
+        {
+            name: SCROLLFIXNAME,
+            description: SCROLLFIXDESC,
+            creator: KUROZATOU,
+            webpage: KUROZATOU_KOFI,
+            diff: diffs.penc5.scrollfix,
+            enabled: false,
+        }
+    ],
+    "penc0+": [
+        {
+            name: SCROLLFIXNAME,
+            description: SCROLLFIXDESC,
+            creator: KUROZATOU,
+            webpage: KUROZATOU_KOFI,
+            diff: diffs.penc0.scrollfix,
+            enabled: false,
+        }
+    ],
 };
 
 export default PATCHES;

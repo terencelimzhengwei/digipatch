@@ -50,6 +50,29 @@ const getAnimation = (buffer, spriteMetadata) => {
     return animation;
 };
 
+const getDigimonNames = (buffer, spriteMetadata, isPencPlus) => {
+    if (!isPencPlus) {
+        return []
+    }
+    const { DigimonNameLocation, MaxNameLength, NumCharas } =
+        spriteMetadata;
+    const data = new DataView(buffer.slice(0));
+    const offset = Number(DigimonNameLocation);
+    const names = [];
+    for (let i = 0; i < NumCharas; i++) {
+        let name = ''
+        for (let j = 0; j < MaxNameLength; j++) {
+            const char = data.getUint8(offset + i * 2 * MaxNameLength + j * 2)
+            if (char === 0 | char === 255) {
+                continue
+            }
+            name += String.fromCharCode(char)
+        }
+        names.push(name)
+    }
+    return names;
+};
+
 const getCharInfos = (arrayBuffer, spriteMetadata) => {
     const data = new DataView(arrayBuffer.slice(0));
     let offset = Number(spriteMetadata.StatTableLocation);
@@ -297,6 +320,7 @@ const init = async arrayBuffer => {
         firmware.id.includes('penc')
     );
     const animation = getAnimation(buffer, spriteMetadata);
+    const names = getDigimonNames(buffer, spriteMetadata, firmware.id.includes('+'));
     return {
         buffer,
         firmware,
@@ -306,6 +330,7 @@ const init = async arrayBuffer => {
         charInfos,
         questMode,
         animation,
+        names
     };
 };
 
