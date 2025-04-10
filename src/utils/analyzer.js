@@ -63,8 +63,6 @@ const getDigimonNames = (buffer, spriteMetadata, isPencPlus) => {
         let name = ''
         for (let j = 0; j < MaxNameLength; j++) {
             const char = data.getUint16(offset + i * 2 * MaxNameLength + j * 2,true)
-            console.log(char)
-            console.log(String.fromCharCode(char))
             if (char === 0 | char === 65535) {
                 continue
             }
@@ -296,8 +294,6 @@ async function rebuild(data, patchFiles) {
         while (charCodes.length < MaxNameLength) {
             charCodes.push(65535);
         }
-        console.log(name)
-        console.log(charCodes)
         charCodes.forEach((c, index)=> {
             dataView.setUint16(
                 NameOffset + i * MaxNameLength * 2 + index * 2,
