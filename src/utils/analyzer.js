@@ -174,6 +174,7 @@ async function rebuild(data, patchFiles) {
     const dataView = new DataView(buffer);
     const {
         spriteMetadata,
+        firmware,
         imageInfos,
         charInfos,
         questMode,
@@ -288,20 +289,24 @@ async function rebuild(data, patchFiles) {
 
     const { DigimonNameLocation, MaxNameLength } = spriteMetadata;
     const NameOffset = Number(DigimonNameLocation);
-    names.forEach((name, i) => {
-        const charCodes = Array.from(name).map(char => char.charCodeAt(0))
-        charCodes.push(0); // add null terminator
-        while (charCodes.length < MaxNameLength) {
-            charCodes.push(65535);
-        }
-        charCodes.forEach((c, index)=> {
-            dataView.setUint16(
-                NameOffset + i * MaxNameLength * 2 + index * 2,
-                c,
-                true
-            );
-        })
-    });
+    
+    // Only write names if it's a PenC+ version
+    if (firmware.id.includes('+')) {
+        names.forEach((name, i) => {
+            const charCodes = Array.from(name).map(char => char.charCodeAt(0))
+            charCodes.push(0); // add null terminator
+            while (charCodes.length < MaxNameLength) {
+                charCodes.push(65535);
+            }
+            charCodes.forEach((c, index)=> {
+                dataView.setUint16(
+                    NameOffset + i * MaxNameLength * 2 + index * 2,
+                    c,
+                    true
+                );
+            })
+        });
+    }
 
     return buffer;
 }

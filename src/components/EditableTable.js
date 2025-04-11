@@ -209,7 +209,7 @@ const EditableTable = ({ data, updateCharInfos }) => {
         direction: 'asc',
     });
     const [tableData, setTableData] = useState(
-        generateCharacters(charInfos, imageDatas, sortConfig, names, isPencPlus)
+        generateCharacters(charInfos, imageDatas, sortConfig, isPencPlus ? names : [], isPencPlus)
     );
 
     const handleEditClick = index => {
