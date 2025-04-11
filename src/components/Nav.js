@@ -173,7 +173,7 @@ const Nav = props => {
                             colorScheme="blue"
                             onClick={handleJsonImport}
                         >
-                            Import JSON
+                            Import Mod
                         </Button>
                         <Input
                             type="file"

@@ -126,8 +126,8 @@ function App() {
     const handleJsonImport = async jsonData => {
         // Show loading toast
         const loadingToast = toast({
-            title: 'Importing Configuration',
-            description: 'Please wait while we process your configuration...',
+            title: 'Applying Mod',
+            description: 'Please wait while we apply your mod...',
             status: 'info',
             duration: null, // null duration means it won't auto-close
             isClosable: false,
@@ -143,9 +143,9 @@ function App() {
             ) {
                 toast.close(loadingToast);
                 toast({
-                    title: 'Invalid JSON Format',
+                    title: 'Invalid Mod File',
                     description:
-                        'The JSON file must contain animation, digimons, and quest_mode fields',
+                        'The mod file is invalid. Please ensure that the mod file is valid',
                     status: 'error',
                     duration: 9000,
                     isClosable: true,
@@ -159,7 +159,7 @@ function App() {
                 toast.close(loadingToast);
                 toast({
                     title: 'Version Mismatch',
-                    description: `The JSON file is for version ${jsonData.source_version}, but the current firmware is ${data.firmware.id}`,
+                    description: `The JSON file is for version ${jsonData.version_name}, but the current firmware is ${data.firmware.name}`,
                     status: 'error',
                     duration: 9000,
                     isClosable: true,
@@ -272,9 +272,9 @@ function App() {
 
             // Update the loading toast to success
             toast.update(loadingToast, {
-                title: 'Configuration Imported',
+                title: 'Mod Applied',
                 description:
-                    'The JSON configuration has been successfully imported',
+                    'The mod has been successfully applied. Please proceed to edit or build your BIN file',
                 status: 'success',
                 duration: 9000,
                 isClosable: true,
@@ -288,7 +288,7 @@ function App() {
             toast({
                 title: 'Import Failed',
                 description:
-                    'An unexpected error occurred while importing the configuration',
+                    'An unexpected error occurred while importing the mod file',
                 status: 'error',
                 duration: 9000,
                 isClosable: true,
