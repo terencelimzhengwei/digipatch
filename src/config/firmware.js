@@ -492,8 +492,7 @@ const FIRMWARES = [
                 dataView.getUint16(position + 2, true) === 0xfe00 &&
                 dataView.getUint16(position + 4, true) === 0x990c &&
                 dataView.getUint16(position + 6, true) === 0x0cfe &&
-                dataView.getUint16(position + 8, true) === 0xd6e4 &&
-                dataView.getUint16(position, true) === 0x50
+                dataView.getUint16(position + 8, true) === 0xd6e4
             );
         },
         regions: [
