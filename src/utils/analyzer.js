@@ -52,23 +52,25 @@ const getAnimation = (buffer, spriteMetadata) => {
 
 const getDigimonNames = (buffer, spriteMetadata, isPencPlus) => {
     if (!isPencPlus) {
-        return []
+        return [];
     }
-    const { DigimonNameLocation, MaxNameLength, NumCharas } =
-        spriteMetadata;
+    const { DigimonNameLocation, MaxNameLength, NumCharas } = spriteMetadata;
     const data = new DataView(buffer.slice(0));
     const offset = Number(DigimonNameLocation);
     const names = [];
     for (let i = 0; i < NumCharas; i++) {
-        let name = ''
+        let name = '';
         for (let j = 0; j < MaxNameLength; j++) {
-            const char = data.getUint16(offset + i * 2 * MaxNameLength + j * 2,true)
-            if (char === 0 | char === 65535) {
-                continue
+            const char = data.getUint16(
+                offset + i * 2 * MaxNameLength + j * 2,
+                true
+            );
+            if ((char === 0) | (char === 65535)) {
+                continue;
             }
-            name += String.fromCharCode(char)
+            name += String.fromCharCode(char);
         }
-        names.push(name)
+        names.push(name);
     }
     return names;
 };
@@ -180,7 +182,7 @@ async function rebuild(data, patchFiles) {
         questMode,
         imageDatas,
         animation,
-        names
+        names,
     } = data;
     if (patchFiles) {
         patchFiles.forEach(file => {
@@ -289,22 +291,22 @@ async function rebuild(data, patchFiles) {
 
     const { DigimonNameLocation, MaxNameLength } = spriteMetadata;
     const NameOffset = Number(DigimonNameLocation);
-    
+
     // Only write names if it's a PenC+ version
     if (firmware.id.includes('+')) {
         names.forEach((name, i) => {
-            const charCodes = Array.from(name).map(char => char.charCodeAt(0))
+            const charCodes = Array.from(name).map(char => char.charCodeAt(0));
             charCodes.push(0); // add null terminator
             while (charCodes.length < MaxNameLength) {
                 charCodes.push(65535);
             }
-            charCodes.forEach((c, index)=> {
+            charCodes.forEach((c, index) => {
                 dataView.setUint16(
                     NameOffset + i * MaxNameLength * 2 + index * 2,
                     c,
                     true
                 );
-            })
+            });
         });
     }
 
@@ -343,7 +345,11 @@ const init = async arrayBuffer => {
         firmware.id.includes('penc')
     );
     const animation = getAnimation(buffer, spriteMetadata);
-    const names = getDigimonNames(buffer, spriteMetadata, firmware.id.includes('+'));
+    const names = getDigimonNames(
+        buffer,
+        spriteMetadata,
+        firmware.id.includes('+')
+    );
     return {
         buffer,
         firmware,
@@ -353,7 +359,7 @@ const init = async arrayBuffer => {
         charInfos,
         questMode,
         animation,
-        names
+        names,
     };
 };
 

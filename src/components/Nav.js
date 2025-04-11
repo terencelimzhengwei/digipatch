@@ -10,6 +10,7 @@ import {
     MenuList,
     MenuItem,
     useBreakpointValue,
+    Input,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { HamburgerIcon } from '@chakra-ui/icons';
@@ -18,6 +19,7 @@ const Nav = props => {
     const { pageActive, fileUploaded, navClick, restartClick, buildClick } =
         props;
     const [menuOpen, setMenuOpen] = useState(false);
+    const fileInputRef = React.useRef();
 
     // Determine whether to display buttons or a hamburger menu based on screen size
     const isMobile = useBreakpointValue({
@@ -30,6 +32,30 @@ const Nav = props => {
     const handleMenuClick = index => {
         navClick(index);
         setMenuOpen(false); // Close menu after a click
+    };
+
+    const handleJsonImport = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = event => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    const jsonData = JSON.parse(e.target.result);
+                    props.onJsonImport(jsonData);
+                    // Reset the file input after processing
+                    event.target.value = '';
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                    // Reset the file input even if there's an error
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
     };
 
     return (
@@ -141,13 +167,29 @@ const Nav = props => {
             <Spacer />
             <ButtonGroup variant="outline" spacing="2">
                 {fileUploaded ? (
-                    <Button
-                        fontSize={['sm', 'md']}
-                        colorScheme="green"
-                        onClick={buildClick}
-                    >
-                        Build
-                    </Button>
+                    <>
+                        <Button
+                            fontSize={['sm', 'md']}
+                            colorScheme="blue"
+                            onClick={handleJsonImport}
+                        >
+                            Import JSON
+                        </Button>
+                        <Input
+                            type="file"
+                            accept=".json"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            display="none"
+                        />
+                        <Button
+                            fontSize={['sm', 'md']}
+                            colorScheme="green"
+                            onClick={buildClick}
+                        >
+                            Build
+                        </Button>
+                    </>
                 ) : null}
                 {fileUploaded ? (
                     <Button

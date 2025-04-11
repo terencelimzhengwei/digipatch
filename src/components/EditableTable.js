@@ -14,7 +14,14 @@ import {
 import { CheckIcon, EditIcon } from '@chakra-ui/icons';
 
 const EditableCell = memo(
-    ({ index, inputValue, rawValue, isEdit, handleInputChange, isName = false }) => {
+    ({
+        index,
+        inputValue,
+        rawValue,
+        isEdit,
+        handleInputChange,
+        isName = false,
+    }) => {
         if (isEdit) {
             return (
                 <Input
@@ -26,9 +33,15 @@ const EditableCell = memo(
                     minWidth={50}
                     maxLength={isName ? 16 : undefined}
                     pattern={isName ? '[A-Z_]*' : undefined}
-                    onInput={isName ? (e) => {
-                        e.target.value = e.target.value.toUpperCase().replace(/[^A-Z_]/g, '');
-                    } : undefined}
+                    onInput={
+                        isName
+                            ? e => {
+                                  e.target.value = e.target.value
+                                      .toUpperCase()
+                                      .replace(/[^A-Z_]/g, '');
+                              }
+                            : undefined
+                    }
                 />
             );
         }
@@ -154,7 +167,13 @@ const EditableRow = ({
     );
 };
 
-const generateCharacters = (charInfos, imageDatas, sortConfig, names = [], isPencPlus = false) => {
+const generateCharacters = (
+    charInfos,
+    imageDatas,
+    sortConfig,
+    names = [],
+    isPencPlus = false
+) => {
     const characters = charInfos.map((info, index) => {
         return {
             index,
@@ -209,7 +228,13 @@ const EditableTable = ({ data, updateCharInfos }) => {
         direction: 'asc',
     });
     const [tableData, setTableData] = useState(
-        generateCharacters(charInfos, imageDatas, sortConfig, isPencPlus ? names : [], isPencPlus)
+        generateCharacters(
+            charInfos,
+            imageDatas,
+            sortConfig,
+            isPencPlus ? names : [],
+            isPencPlus
+        )
     );
 
     const handleEditClick = index => {
@@ -227,7 +252,7 @@ const EditableTable = ({ data, updateCharInfos }) => {
                 newAttributes,
                 imageDatas
             ),
-            name: newName
+            name: newName,
         };
         setTableData(updatedTableData);
         const attributes = updatedTableData.map(row => row.attributes);

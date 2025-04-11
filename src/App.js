@@ -15,6 +15,7 @@ import UpdateQuest from './components/UpdateQuest';
 import UpdateAnimation from './components/UpdateAnimation';
 import About from './components/About';
 import Patch from './components/Patch';
+import { getImageDetails, arrayBufferToImageData } from './utils/imageUtils';
 
 // Create a theme with default mode set to dark
 const theme = extendTheme({
@@ -29,6 +30,7 @@ function App() {
     const [originalData, setOriginalData] = useState(null);
     const [data, setData] = useState(null);
     const [patchFiles, setPatchFiles] = useState([]);
+    const [resetSpriteView, setResetSpriteView] = useState(0);
     const toast = useToast();
 
     const navClick = p => {
@@ -58,16 +60,17 @@ function App() {
     };
 
     const updateSprite = data => {
-        if (data.buffer.length > 8388608){
+        if (data.buffer.length > 8388608) {
             toast({
                 title: 'Sprites not updated',
-                description: 'Sprites not updated as it goes beyond the 8MB limit available. This may be due to using Character Sprites above 48x48, or adding too many new sprites.',
+                description:
+                    'Sprites not updated as it goes beyond the 8MB limit available. This may be due to using Character Sprites above 48x48, or adding too many new sprites.',
                 status: 'error',
                 duration: 9000,
                 isClosable: true,
                 position: 'bottom-right',
             });
-            return
+            return;
         }
         setData(data);
         toast({
@@ -120,9 +123,183 @@ function App() {
         });
     };
 
+    const handleJsonImport = async jsonData => {
+        // Show loading toast
+        const loadingToast = toast({
+            title: 'Importing Configuration',
+            description: 'Please wait while we process your configuration...',
+            status: 'info',
+            duration: null, // null duration means it won't auto-close
+            isClosable: false,
+            position: 'bottom-right',
+        });
+
+        try {
+            // Validate JSON structure
+            if (
+                !jsonData.animation ||
+                !jsonData.digimons ||
+                !jsonData.quest_mode
+            ) {
+                toast.close(loadingToast);
+                toast({
+                    title: 'Invalid JSON Format',
+                    description:
+                        'The JSON file must contain animation, digimons, and quest_mode fields',
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                    position: 'bottom-right',
+                });
+                return;
+            }
+
+            // Check source version
+            if (jsonData.source_version !== data.firmware.id) {
+                toast.close(loadingToast);
+                toast({
+                    title: 'Version Mismatch',
+                    description: `The JSON file is for version ${jsonData.source_version}, but the current firmware is ${data.firmware.id}`,
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                    position: 'bottom-right',
+                });
+                return;
+            }
+
+            // Update animation
+            const newData = { ...data };
+            newData.animation = jsonData.animation;
+
+            // Update character stats
+            newData.charInfos = jsonData.digimons.map(digimon => digimon.stats);
+
+            // Update quest mode
+            newData.questMode = jsonData.quest_mode;
+
+            // Process sprite URLs if they exist
+            if (jsonData.sprite_urls) {
+                try {
+                    const imagePromises = jsonData.sprite_urls.map(
+                        async (url, index) => {
+                            const response = await fetch(url);
+                            const blob = await response.blob();
+                            const file = new File([blob], `${index}.png`, {
+                                type: 'image/png',
+                            });
+                            const { name, imageData, rgb565 } =
+                                await getImageDetails(file);
+
+                            if (imageData.width > 96 || imageData.height > 96) {
+                                throw new Error(
+                                    `Image ${index} exceeds maximum dimensions of 96x96`
+                                );
+                            }
+
+                            return {
+                                name,
+                                imageData,
+                                rgb565,
+                            };
+                        }
+                    );
+
+                    const imageDetails = await Promise.all(imagePromises);
+                    const newImageDatas = imageDetails.map(
+                        ({ imageData, rgb565 }) =>
+                            arrayBufferToImageData(
+                                rgb565,
+                                imageData.width,
+                                imageData.height
+                            )
+                    );
+
+                    // Update imageInfos with new dimensions
+                    const dataOffsets = [];
+                    dataOffsets.push(newData.imageInfos[0].dataOffset);
+                    const imageSizes = newImageDatas.map((image, index) => {
+                        const { height, width } = image.imageData;
+                        const imageLength = height * width * 2;
+                        dataOffsets.push(dataOffsets[index] + imageLength);
+                        return { width, height };
+                    });
+
+                    const newImageInfos = imageSizes.map((size, index) => {
+                        const { width, height } = size;
+                        const dataOffset = dataOffsets[index];
+                        return { width, height, dataOffset };
+                    });
+
+                    // Check if the total size exceeds the flash chip limit
+                    if (
+                        Number(newData.spriteMetadata.SpritePackBase) +
+                            dataOffsets.slice(-1)[0] >
+                        Number(0x7fcfff)
+                    ) {
+                        toast.close(loadingToast);
+                        toast({
+                            title: 'Over flash chip size limit',
+                            description:
+                                'There is insufficient space to store all your sprites in the flash chip',
+                            status: 'error',
+                            duration: 9000,
+                            isClosable: true,
+                            position: 'bottom-right',
+                        });
+                        return;
+                    }
+
+                    newData.imageDatas = newImageDatas;
+                    newData.imageInfos = newImageInfos;
+                } catch (error) {
+                    toast.close(loadingToast);
+                    toast({
+                        title: 'Error Processing Sprites',
+                        description:
+                            error.message ||
+                            'Failed to process some sprite URLs',
+                        status: 'error',
+                        duration: 9000,
+                        isClosable: true,
+                        position: 'bottom-right',
+                    });
+                    return;
+                }
+            }
+
+            setData(newData);
+
+            // Update the loading toast to success
+            toast.update(loadingToast, {
+                title: 'Configuration Imported',
+                description:
+                    'The JSON configuration has been successfully imported',
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+            });
+
+            // Reset the sprite view
+            setResetSpriteView(prev => prev + 1);
+        } catch (error) {
+            // Handle any unexpected errors
+            toast.close(loadingToast);
+            toast({
+                title: 'Import Failed',
+                description:
+                    'An unexpected error occurred while importing the configuration',
+                status: 'error',
+                duration: 9000,
+                isClosable: true,
+                position: 'bottom-right',
+            });
+        }
+    };
+
     const handleUpload = async arrayBuffer => {
         const originalData = await init(arrayBuffer);
-        console.log(originalData)
+        console.log(originalData);
         if (!originalData || !originalData.firmware) {
             toast({
                 title: 'Invalid BIN File',
@@ -159,11 +336,9 @@ function App() {
             setPage(1);
             toast({
                 title: `Modified ${originalData.firmware.name} detected`,
-                description: (
-                    originalData.firmware.id.includes('+') ?
-                    `Firmware is a modified ${originalData.firmware.name} that uses Kurozatou's PenC+ mod`:
-                    `Firmware is a modified ${originalData.firmware.name}`
-                ),
+                description: originalData.firmware.id.includes('+')
+                    ? `Firmware is a modified ${originalData.firmware.name} that uses Kurozatou's PenC+ mod`
+                    : `Firmware is a modified ${originalData.firmware.name}`,
                 status: 'warning',
                 duration: 9000,
                 isClosable: true,
@@ -172,6 +347,7 @@ function App() {
             return;
         }
     };
+
     return (
         <ChakraProvider theme={theme}>
             <Box
@@ -187,12 +363,17 @@ function App() {
                         navClick={navClick}
                         restartClick={restartClick}
                         buildClick={buildClick}
+                        onJsonImport={handleJsonImport}
                     />
                     {!originalData & (page === 0) ? (
                         <UploadBIN handleUpload={handleUpload} />
                     ) : null}
                     {page === 1 ? (
-                        <UpdateSprite updateSprite={updateSprite} data={data} />
+                        <UpdateSprite
+                            updateSprite={updateSprite}
+                            data={data}
+                            reset={resetSpriteView}
+                        />
                     ) : null}
                     {page === 2 ? (
                         <UpdateStats data={data} updateData={updateStats} />

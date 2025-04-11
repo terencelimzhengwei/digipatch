@@ -209,7 +209,7 @@ const PATCHES = {
             enabled: false,
         },
     ],
-    "penc1+": [
+    'penc1+': [
         {
             name: SCROLLFIXNAME,
             description: SCROLLFIXDESC,
@@ -217,9 +217,9 @@ const PATCHES = {
             webpage: KUROZATOU_KOFI,
             diff: diffs.penc1.scrollfix,
             enabled: false,
-        }
+        },
     ],
-    "penc2+": [
+    'penc2+': [
         {
             name: SCROLLFIXNAME,
             description: SCROLLFIXDESC,
@@ -227,9 +227,9 @@ const PATCHES = {
             webpage: KUROZATOU_KOFI,
             diff: diffs.penc2.scrollfix,
             enabled: false,
-        }
+        },
     ],
-    "penc3+": [
+    'penc3+': [
         {
             name: SCROLLFIXNAME,
             description: SCROLLFIXDESC,
@@ -237,9 +237,9 @@ const PATCHES = {
             webpage: KUROZATOU_KOFI,
             diff: diffs.penc3.scrollfix,
             enabled: false,
-        }
+        },
     ],
-    "penc4+": [
+    'penc4+': [
         {
             name: SCROLLFIXNAME,
             description: SCROLLFIXDESC,
@@ -247,9 +247,9 @@ const PATCHES = {
             webpage: KUROZATOU_KOFI,
             diff: diffs.penc4.scrollfix,
             enabled: false,
-        }
+        },
     ],
-    "penc5+": [
+    'penc5+': [
         {
             name: SCROLLFIXNAME,
             description: SCROLLFIXDESC,
@@ -257,9 +257,9 @@ const PATCHES = {
             webpage: KUROZATOU_KOFI,
             diff: diffs.penc5.scrollfix,
             enabled: false,
-        }
+        },
     ],
-    "penc0+": [
+    'penc0+': [
         {
             name: SCROLLFIXNAME,
             description: SCROLLFIXDESC,
@@ -267,7 +267,7 @@ const PATCHES = {
             webpage: KUROZATOU_KOFI,
             diff: diffs.penc0.scrollfix,
             enabled: false,
-        }
+        },
     ],
 };
 

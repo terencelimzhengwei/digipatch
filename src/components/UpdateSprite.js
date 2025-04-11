@@ -11,12 +11,26 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { useDropzone } from 'react-dropzone';
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { getImageDetails, arrayBufferToImageData } from '../utils/imageUtils';
 
+const BATCH_SIZE = 50; // Number of sprites to load at a time
+
 const UpdateSprite = props => {
-    const { data, updateSprite } = props;
+    const { data, updateSprite, reset } = props;
     const toast = useToast();
+    const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
+    const loadMoreRef = useRef(null);
+
+    // Reset visibleCount when reset prop changes
+    useEffect(() => {
+        setVisibleCount(BATCH_SIZE);
+    }, [reset]);
+
+    const visibleSprites = useMemo(() => {
+        if (!data?.imageDatas) return [];
+        return data.imageDatas.slice(0, visibleCount);
+    }, [data?.imageDatas, visibleCount]);
 
     const onDrop = async acceptedFiles => {
         const { imageDatas, imageInfos, spriteMetadata } = data;
@@ -123,9 +137,38 @@ const UpdateSprite = props => {
         multiple: true,
     });
 
+    const handleLoadMore = useCallback(() => {
+        if (visibleCount < (data?.imageDatas?.length || 0)) {
+            setVisibleCount(prev =>
+                Math.min(prev + BATCH_SIZE, data.imageDatas.length)
+            );
+        }
+    }, [data?.imageDatas?.length, visibleCount]);
+
+    useEffect(() => {
+        const currentRef = loadMoreRef.current;
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting) {
+                    handleLoadMore();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (currentRef) {
+            observer.observe(currentRef);
+        }
+
+        return () => {
+            if (currentRef) {
+                observer.unobserve(currentRef);
+            }
+        };
+    }, [handleLoadMore]);
+
     const memoizedImageList = useMemo(() => {
-        const imageDatas = data ? data.imageDatas : [];
-        return imageDatas.map((image, index) => (
+        return visibleSprites.map((image, index) => (
             <WrapItem key={index} align={'center'}>
                 <VStack
                     gap={0}
@@ -143,13 +186,13 @@ const UpdateSprite = props => {
                             borderRadius={'10%'}
                             src={image.url}
                             alt={`Sprite ${index}`}
-                            fallbackSrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAAAAAByaaZbAAAA6ElEQVRIx+3UwQ6CMAzGcd7/YajRdIZ1HjQW9liODXCo1PZgTIzfgdP/B8sONEhE3pN22FBkco446kYNMUKaYzUgyAta4F0BbvgUoGA8EnH+hOvVIHJwLvT6a03PYYjRBAz7gy+BgY0gHM4mEHawPxtA6gH2FzXI/UrI4FT6Wohg6Sshgaq/CwGseoDD5Q146GexCZ76SWyBF30RNWC6in0WFeiPgCz2o7iD1MMkNvv0v/MzyH0RQg84g6lPr7hK/QKWPh1T6mdQ9W9WgL4vwNBnYOkz6MAGPP4CaPV9O4IODet8g940vAF536t7Ag/0WAAAAABJRU5ErkJggg=="
+                            fallbackSrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAAAAAByaaZbAAAA6ElEQVRIx+3UwQ6CMAzGcd7/YajRdIZ1HjQW9liODXCo1PZgTIzfgdP/B8sONEhE3pN22FBkco446kYNMUKaYzUgyAta4F0BbvgUoGA8EnH+hOvVIHJwLvT6a03PYYjRBAz7gy+BgY0gHM4mEHawPxtA6kH2FzXI/UrI4FT6Wohg6Sshgaq/CwGseoDD5Q146GexCZ76SWyBF30RNWC6in0WFeiPgCz2o7iD1MMkNvv0v/MzyH0RQg84g6lPr7hK/QKWPh1T6mdQ9W9WgL4vwNBnYOkz6MAGPP4CaPV9O4IODet8g940vAF536t7Ag/0WAAAAABJRU5ErkJggg=="
                         />
                     </Center>
                 </VStack>
             </WrapItem>
         ));
-    }, [data]);
+    }, [visibleSprites]);
 
     return (
         <Flex flexDir={'column'} align={'center'} gap={4} p={2}>
@@ -179,6 +222,12 @@ const UpdateSprite = props => {
             </Box>
             <Wrap justify={'center'} align={'center'} display={'flex'}>
                 {memoizedImageList}
+                {visibleCount < (data?.imageDatas?.length || 0) && (
+                    <div
+                        ref={loadMoreRef}
+                        style={{ width: '100%', height: '20px' }}
+                    />
+                )}
             </Wrap>
         </Flex>
     );
