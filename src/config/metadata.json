@@ -61,6 +61,7 @@
         "CharaSpriteWidth": 48,
         "CharaSpriteHeight": 48,
         "SizeTableOffset": 40346,
+        "SizeTableOffsetTwo": 516096,
         "NumImages": 597,
         "NumCharas": 18,
         "NumFramesPerChara": 15,

@@ -107,6 +107,24 @@ const getImageInfos = (arrayBuffer, spriteMetadata) => {
         });
         offset += 4;
     }
+    console.log(imageInfos)
+
+    let secondOffset = spriteMetadata?.SizeTableOffsetTwo ?? null;
+    console.log(secondOffset)
+    if (secondOffset) {
+        console.log(secondOffset)
+        while (true) {
+            const width = data.getUint16(secondOffset, true)
+            console.log(width)
+            if (width === 0) {
+                break
+            }
+            const height = data.getUint16(secondOffset + 2, true)
+            imageInfos.push({width,height})
+            secondOffset += 4
+        }   
+    }
+    console.log(imageInfos)
 
     // Read offsets
     offset = Number(spriteMetadata.SpritePackBase);
