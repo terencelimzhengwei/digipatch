@@ -155,7 +155,7 @@ function App() {
             }
 
             // Check source version
-            if (jsonData.source_version !== data.firmware.id) {
+            if (jsonData.root_version !== data.firmware.id) {
                 toast.close(loadingToast);
                 toast({
                     title: 'Version Mismatch',
