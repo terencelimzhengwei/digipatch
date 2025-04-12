@@ -58,16 +58,17 @@ function App() {
     };
 
     const updateSprite = data => {
-        if (data.buffer.length > 8388608){
+        if (data.buffer.length > 8388608) {
             toast({
                 title: 'Sprites not updated',
-                description: 'Sprites not updated as it goes beyond the 8MB limit available. This may be due to using Character Sprites above 48x48, or adding too many new sprites.',
+                description:
+                    'Sprites not updated as it goes beyond the 8MB limit available. This may be due to using Character Sprites above 48x48, or adding too many new sprites.',
                 status: 'error',
                 duration: 9000,
                 isClosable: true,
                 position: 'bottom-right',
             });
-            return
+            return;
         }
         setData(data);
         toast({
@@ -122,7 +123,7 @@ function App() {
 
     const handleUpload = async arrayBuffer => {
         const originalData = await init(arrayBuffer);
-        console.log(originalData)
+        console.log(originalData);
         if (!originalData || !originalData.firmware) {
             toast({
                 title: 'Invalid BIN File',
@@ -159,11 +160,9 @@ function App() {
             setPage(1);
             toast({
                 title: `Modified ${originalData.firmware.name} detected`,
-                description: (
-                    originalData.firmware.id.includes('+') ?
-                    `Firmware is a modified ${originalData.firmware.name} that uses Kurozatou's PenC+ mod`:
-                    `Firmware is a modified ${originalData.firmware.name}`
-                ),
+                description: originalData.firmware.id.includes('+')
+                    ? `Firmware is a modified ${originalData.firmware.name} that uses Kurozatou's PenC+ mod`
+                    : `Firmware is a modified ${originalData.firmware.name}`,
                 status: 'warning',
                 duration: 9000,
                 isClosable: true,

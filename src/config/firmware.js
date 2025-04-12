@@ -815,7 +815,7 @@ const FIRMWARES = [
                 ]),
             },
         ],
-    }
+    },
 ];
 
 export default FIRMWARES;
