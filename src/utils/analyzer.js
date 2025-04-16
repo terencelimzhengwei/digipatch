@@ -97,35 +97,30 @@ const getCharInfos = (arrayBuffer, spriteMetadata) => {
 
 const getImageInfos = (arrayBuffer, spriteMetadata) => {
     const data = new DataView(arrayBuffer.slice(0));
-    // Read size table
-    let offset = spriteMetadata.SizeTableOffset;
-    let imageInfos = [];
-    for (let i = 0; i < spriteMetadata.NumImages; i++) {
-        imageInfos.push({
-            width: data.getUint16(offset, true),
-            height: data.getUint16(offset + 2, true),
-        });
-        offset += 4;
-    }
-    console.log(imageInfos)
-
     let secondOffset = spriteMetadata?.SizeTableOffsetTwo ?? null;
-    console.log(secondOffset)
-    if (secondOffset) {
-        console.log(secondOffset)
+    let offset = spriteMetadata?.SizeTableOffset ?? null;
+    let imageInfos = [];
+    if (!secondOffset) {
+        // Read size table
+        for (let i = 0; i < spriteMetadata.NumImages; i++) {
+            imageInfos.push({
+                width: data.getUint16(offset, true),
+                height: data.getUint16(offset + 2, true),
+            });
+            offset += 4;
+        }
+    } else {
         while (true) {
             const width = data.getUint16(secondOffset, true)
-            console.log(width)
             if (width === 0) {
                 break
             }
             const height = data.getUint16(secondOffset + 2, true)
             imageInfos.push({width,height})
             secondOffset += 4
-        }   
-    }
-    console.log(imageInfos)
+        } 
 
+    }
     // Read offsets
     offset = Number(spriteMetadata.SpritePackBase);
     imageInfos.forEach(info => {
@@ -143,6 +138,72 @@ const getImage = (arrayBuffer, spriteMetadata, info) => {
             info.width * info.height * 2
     );
     return arrayBufferToImageData(pixels, info.width, info.height);
+};
+
+const getConfig = (arrayBuffer, spriteMetadata) => {
+    const data = new DataView(arrayBuffer.slice(0));
+    const configOffset = spriteMetadata?.ConfigLocation ?? null
+    if (configOffset) {
+        const numChars = data.getUint16(configOffset,true);
+        const isCycle = data.getUint16(configOffset + 2,true);
+        return {numChars,isCycle}
+    }
+    return null
+};
+
+const getNewCharInfos = (arrayBuffer, spriteMetadata) => {
+    const data = new DataView(arrayBuffer.slice(0));
+    const config = getConfig(arrayBuffer,spriteMetadata)
+    if (config) {
+        const numChars = config.numChars
+        let offset = Number(spriteMetadata?.ConfigLocation + 4);
+        const statLength = spriteMetadata.Stats.length;
+        let charInfos = [];
+        for (let i = 0; i < numChars; i++) {
+            const stats = spriteMetadata.Stats.map((stat, index) => {
+                const obj = {};
+                obj[stat] = data.getUint16(
+                    offset + i * statLength * 2 + index * 2,
+                    true
+                );
+                return obj;
+            });
+            const statObj = Object.assign({}, ...stats);
+            charInfos.push(statObj);
+        }
+        return charInfos;
+    }
+    return null
+};
+
+const getEvolutions = (arrayBuffer, spriteMetadata) => {
+    const data = new DataView(arrayBuffer.slice(0));
+    const config = getConfig(arrayBuffer,spriteMetadata)
+    if (config) {
+        const numChars = config.numChars
+        const statLength = spriteMetadata.Stats.length;
+        const evolutionLength = spriteMetadata.Evolutions.length;
+        let offset = Number(spriteMetadata?.ConfigLocation + 4 + numChars * statLength * 2);
+        let evolutions = [];
+        let i = 0;
+        while (true) {
+            const baseOffset = offset + i * evolutionLength * 2;
+
+            const evolutionObj = Object.fromEntries(
+                spriteMetadata.Evolutions.map((stat, index) => [
+                    stat,
+                    data.getUint16(baseOffset + index * 2, true)
+                ])
+            );
+
+            const isEnd = Object.values(evolutionObj).every(val => val === 0);
+            if (isEnd) return evolutions;
+
+            evolutions.push(evolutionObj);
+            i += 1;
+        }
+    }
+    return null
 };
 
 const getImages = (arrayBuffer, spriteMetadata, imageInfos) => {
@@ -189,38 +250,8 @@ const downloadZip = async (arrayBuffer, spriteUrls) => {
     downloadFile(URL.createObjectURL(content), 'patched_bin.zip');
 };
 
-async function rebuild(data, patchFiles) {
-    const buffer = data.buffer.slice(0);
-    const dataView = new DataView(buffer);
-    const {
-        spriteMetadata,
-        firmware,
-        imageInfos,
-        charInfos,
-        questMode,
-        imageDatas,
-        animation,
-        names,
-    } = data;
-    if (patchFiles) {
-        patchFiles.forEach(file => {
-            file.diff.forEach(diff => {
-                const { start, original_data, patched_data } = diff;
-
-                const dataToUse = file.enabled ? patched_data : original_data;
-
-                // Convert the hex data string to a Uint8Array
-                const byteArray = hexStringToUint8Array(dataToUse);
-
-                // Write each byte into the buffer using the DataView
-                byteArray.forEach((byte, i) => {
-                    dataView.setUint8(Number(start) + i, byte, true);
-                });
-            });
-        });
-    }
-
-    const view = new Uint8Array(buffer);
+const rebuildImages = (view, spriteMetadata, imageInfos, imageDatas, dataView) => {
+    const sizeTableOffset = spriteMetadata?.SizeTableOffsetTwo ?? spriteMetadata.SizeTableOffset
 
     // Update size and offset table and image data
     imageInfos.forEach((img, i) => {
@@ -231,13 +262,13 @@ async function rebuild(data, patchFiles) {
         );
 
         dataView.setUint16(
-            spriteMetadata.SizeTableOffset + i * 4,
+            sizeTableOffset + i * 4,
             img.width,
             true
         );
 
         dataView.setUint16(
-            spriteMetadata.SizeTableOffset + i * 4 + 2,
+            sizeTableOffset + i * 4 + 2,
             img.height,
             true
         );
@@ -248,20 +279,9 @@ async function rebuild(data, patchFiles) {
             true
         );
     });
+}
 
-    // Update character stats
-    const statOffset = Number(spriteMetadata.StatTableLocation);
-    const statLength = spriteMetadata.Stats.length;
-    charInfos.forEach((info, charIndex) => {
-        Object.entries(info).forEach(([key, value], statIndex) => {
-            dataView.setUint16(
-                statOffset + (charIndex * statLength + statIndex) * 2,
-                value,
-                true
-            );
-        });
-    });
-
+const rebuildQuests = (dataView, spriteMetadata, questMode) => {
     // Update quest data
     const questOffset = Number(spriteMetadata.QuestModeLocation);
     questMode.forEach((stage, stageIndex) => {
@@ -281,7 +301,9 @@ async function rebuild(data, patchFiles) {
             );
         });
     });
+}
 
+const rebuildAnimations = (dataView, spriteMetadata, animation) => {
     const { AnimationLocation, AnimationFrameInfo } = spriteMetadata;
     const offset = Number(AnimationLocation);
     animation.forEach((frame, index) => {
@@ -306,7 +328,29 @@ async function rebuild(data, patchFiles) {
             true
         );
     });
+}
 
+const rebuildPatches = (dataView, patchFiles) => {
+    if (patchFiles) {
+        patchFiles.forEach(file => {
+            file.diff.forEach(diff => {
+                const { start, original_data, patched_data } = diff;
+
+                const dataToUse = file.enabled ? patched_data : original_data;
+
+                // Convert the hex data string to a Uint8Array
+                const byteArray = hexStringToUint8Array(dataToUse);
+
+                // Write each byte into the buffer using the DataView
+                byteArray.forEach((byte, i) => {
+                    dataView.setUint8(Number(start) + i, byte, true);
+                });
+            });
+        });
+    }
+}
+
+const rebuildNames = (dataView, firmware, spriteMetadata, names) => {
     const { DigimonNameLocation, MaxNameLength } = spriteMetadata;
     const NameOffset = Number(DigimonNameLocation);
 
@@ -327,6 +371,79 @@ async function rebuild(data, patchFiles) {
             });
         });
     }
+}
+
+const rebuildConfig = (dataView, spriteMetadata, config) => {
+    const configLocation = spriteMetadata?.configLocation ?? null
+    if (configLocation && config) {
+        dataView.setUint16(configLocation, config.numChars, true)
+        dataView.setUint16(configLocation, config.isCycle, true)
+    }
+}
+
+const rebuildCharacters = (dataView, spriteMetadata, config, charInfos) => {
+    // Update character stats
+    const statOffset = config ?  Number(spriteMetadata?.ConfigLocation + 4) : Number(spriteMetadata.StatTableLocation);
+    const statLength = spriteMetadata.Stats.length;
+    charInfos.forEach((info, charIndex) => {
+        Object.entries(info).forEach(([key, value], statIndex) => {
+            dataView.setUint16(
+                statOffset + (charIndex * statLength + statIndex) * 2,
+                value,
+                true
+            );
+        });
+    });
+}
+
+const rebuildEvolutions = (dataView, spriteMetadata, config, evolutions) => {
+    if (config && evolutions) {
+        const zeroedObj = Object.fromEntries(spriteMetadata.Evolutions.map(key => [key, 0]));
+        const newEvolutions = [
+            ...evolutions,
+            zeroedObj
+        ]
+        const numChars = config.numChars
+        const statLength = spriteMetadata.Stats.length;
+        const evolutionLength = spriteMetadata.Evolutions.length;
+        const offset = Number(spriteMetadata?.ConfigLocation + 4 + numChars * statLength * 2);
+        newEvolutions.forEach((info, evolutionIndex) => {
+            Object.entries(info).forEach(([key, value], statIndex) => {
+                dataView.setUint16(
+                    offset + (evolutionIndex * evolutionLength + statIndex) * 2,
+                    value,
+                    true
+                );
+            });
+        });
+    }
+}
+
+
+async function rebuild(data, patchFiles) {
+    const buffer = data.buffer.slice(0);
+    const dataView = new DataView(buffer);
+    const view = new Uint8Array(buffer);
+    const {
+        spriteMetadata,
+        firmware,
+        imageInfos,
+        charInfos,
+        questMode,
+        imageDatas,
+        animation,
+        names,
+        evolutions,
+        config
+    } = data;
+    rebuildPatches(dataView, patchFiles)
+    rebuildImages(view, spriteMetadata, imageInfos, imageDatas, dataView)
+    rebuildQuests(dataView, spriteMetadata, questMode);
+    rebuildAnimations(dataView, spriteMetadata, animation)
+    rebuildNames(dataView, firmware, spriteMetadata, names)
+    rebuildConfig(dataView, spriteMetadata, config)
+    rebuildCharacters(dataView, spriteMetadata, config, charInfos)
+    rebuildEvolutions(dataView,spriteMetadata, config, evolutions)
 
     return buffer;
 }
@@ -356,7 +473,6 @@ const init = async arrayBuffer => {
     const spriteMetadata = firmware ? metadata[firmware.id] : null;
     const imageInfos = getImageInfos(buffer, spriteMetadata);
     const imageDatas = getImages(buffer, spriteMetadata, imageInfos);
-    const charInfos = getCharInfos(buffer, spriteMetadata);
     const questMode = getQuestInfos(
         buffer,
         spriteMetadata,
@@ -368,6 +484,9 @@ const init = async arrayBuffer => {
         spriteMetadata,
         firmware.id.includes('+')
     );
+    const evolutions = getEvolutions(buffer, spriteMetadata);
+    const config = getConfig(buffer, spriteMetadata);
+    const charInfos = config ? getNewCharInfos(buffer, spriteMetadata) : getCharInfos(buffer, spriteMetadata);
     return {
         buffer,
         firmware,
@@ -378,6 +497,9 @@ const init = async arrayBuffer => {
         questMode,
         animation,
         names,
+        evolutions,
+        config
+
     };
 };
 

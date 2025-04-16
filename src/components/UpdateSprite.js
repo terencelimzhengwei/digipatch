@@ -152,8 +152,7 @@ const UpdateSprite = props => {
                 if (entries[0].isIntersecting) {
                     handleLoadMore();
                 }
-            },
-            { threshold: 0.1 }
+            }
         );
 
         if (currentRef) {
