@@ -374,10 +374,10 @@ const rebuildNames = (dataView, firmware, spriteMetadata, names) => {
 }
 
 const rebuildConfig = (dataView, spriteMetadata, config) => {
-    const configLocation = spriteMetadata?.configLocation ?? null
+    const configLocation = spriteMetadata?.ConfigLocation ?? null
     if (configLocation && config) {
         dataView.setUint16(configLocation, config.numChars, true)
-        dataView.setUint16(configLocation, config.isCycle, true)
+        dataView.setUint16(configLocation + 2, config.isCycle, true)
     }
 }
 

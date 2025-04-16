@@ -178,6 +178,10 @@ function App() {
             // Update quest mode
             newData.questMode = jsonData.quest_mode;
 
+            newData.evolutions = jsonData?.evolutions ?? null;
+
+            newData.config = jsonData?.config ?? null;
+
             // Process sprite URLs if they exist
             if (jsonData.sprite_urls) {
                 try {
@@ -269,6 +273,7 @@ function App() {
             }
 
             setData(newData);
+            console.log(data)
 
             // Update the loading toast to success
             toast.update(loadingToast, {
