@@ -52,7 +52,6 @@ const UpdateSprite = props => {
                 }
                 if (imageData.width > 96 || imageData.height > 96) {
                     dimensionError = true;
-                    return;
                 }
                 const newData = arrayBufferToImageData(
                     rgb565,
@@ -66,15 +65,14 @@ const UpdateSprite = props => {
             await Promise.all(promises);
             if (dimensionError) {
                 toast({
-                    title: 'Dimension Error',
+                    title: 'Dimension Warning',
                     description:
-                        'One of the files you uploaded have invalid dimensions',
-                    status: 'error',
+                        'One of the files you uploaded have dimensions greater than 96px ',
+                    status: 'warning',
                     duration: 9000,
                     isClosable: true,
                     position: 'bottom-right',
                 });
-                return;
             }
 
             if (indexError) {
